@@ -1,6 +1,9 @@
 # Virtual Environment
 venv/
 
+#migration folder
+migrations/
+
 # Python cache files
 __pycache__/
 *.py[cod]
