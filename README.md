@@ -64,12 +64,19 @@ These three commands will:
 2. Autogenerate a new migration script, detailing the changes to be applied to the database.
 3. Apply these changes to the database.
 
+### Add administer to database
+run add_user.py add a administer account to database. you can change the account name, email, password in the file.
+
+```bash
+python add_user.py
+```
+
 ### Running the Application
 
 To run the application, execute:
 
 ```bash
-flask run
+flask run --debug
 ```
 
 Visit `http://localhost:5000` in your web browser to view the application.
