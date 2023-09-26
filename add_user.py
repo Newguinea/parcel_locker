@@ -2,7 +2,11 @@ from app import app
 from app import db
 from app.models import User
 
-def main():
+import sys
+print(sys.path)
+
+with app.app_context():
+
     # Create a new User object
     new_user = User(username='aa', email='a@aa.com')
 
@@ -14,7 +18,3 @@ def main():
 
     # Commit the transaction to the database
     db.session.commit()
-
-if __name__ == '__main__':
-    with app.app_context():
-        main()

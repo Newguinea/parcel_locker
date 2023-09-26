@@ -1,0 +1,17 @@
+{% block content %}
+    <head>
+        <title>Position Details</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    </head>
+    <body>
+    <!-- Logout button -->
+    <button><a href="{{ url_for('logout') }}">Logout</a></button>
+    <br>
+    <!-- Register new residence button -->
+    <button><a href="{{ url_for('residence_info') }}">Register New Residence</a></button>
+    <br>
+    <div id="list_residence"></div>
+
+    <script src="{{ url_for('static', filename='residence_list.js') }}"></script>
+    </body>
+{% endblock %}
