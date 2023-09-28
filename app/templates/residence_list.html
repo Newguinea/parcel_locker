@@ -5,12 +5,14 @@
     </head>
     <body>
     <!-- Logout button -->
-    <button><a href="{{ url_for('logout') }}">Logout</a></button>
+    <button id="logoutButton">Logout</button>
+{#    <button><a href="{{ url_for('logout') }}">Logout</a></button>#}
     <br>
     <!-- Register new residence button -->
-    <button><a href="{{ url_for('residence_info') }}">Register New Residence</a></button>
+    <button id="RegisterResidenceButton">Register New Residence</button>
+{#    <button><a href="{{ url_for('residence_info') }}">Register New Residence</a></button>#}
     <div id="list_residence"></div>
 
-    <script src="{{ url_for('static', filename='residence_list.js') }}"></script>
+    <script src="/static/residence_list.js"></script>
     </body>
 {% endblock %}
