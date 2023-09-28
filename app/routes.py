@@ -127,3 +127,42 @@ def delete_residence(residence_id):
     db.session.delete(residence)
     db.session.commit()
     return jsonify({'message': 'Residence deleted successfully'}), 201
+
+@login_required
+@app.route('/edit_residence/<int:residence_id>', methods=['POST'])
+def edit_residence(residence_id):
+    """
+    change the value of the residence with residence_id
+    """
+    residence = Residence.query.get_or_404(residence_id)
+    data = request.get_json()
+    residence.first_name = data['first_name']
+    residence.last_name = data['last_name']
+    residence.email = data['email']
+    residence.phone_no = data['phone_no']
+    residence.unit_num = data['unit_num']
+    residence.room_no = data['room_no']
+    residence.nfc_id = data['nfc_id']
+    db.session.commit()
+    return jsonify({'message': 'Residence changed successfully'}), 201
+@login_required
+@app.route('/residence_info_get/<int:residence_id>', methods=['GET'])
+def residence_info_get(residence_id):
+    """
+    get all the information of the residence with residence_id
+    """
+    residence = Residence.query.get_or_404(residence_id)
+    return jsonify({
+        'first_name': residence.first_name,
+        'last_name': residence.last_name,
+        'email': residence.email,
+        'phone_no': residence.phone_no,
+        'unit_num': residence.unit_num,
+        'room_no': residence.room_no,
+        'nfc_id': residence.nfc_id
+    })
+
+@login_required
+@app.route('/residence/<int:residence_id>', methods=['GET'])
+def edit_residence_page(residence_id):
+    return render_template('residence_info_edit.html', residence_id=residence_id)
