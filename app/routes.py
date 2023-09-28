@@ -98,6 +98,7 @@ def residence_list_data():
     return format:
     [
         {
+            "id": 1
             "email": "23424251@student.uwa.edu.au",
             "name": "Z Zehua",
             "room_no": "222"
@@ -109,8 +110,20 @@ def residence_list_data():
     residence_list = []
     for residence in residences:
         residence_list.append({
+            'id': residence.id,
             'name': residence.last_name + ' ' + residence.first_name,
             'room_no': residence.room_no,
             'email': residence.email
         })
     return jsonify(residence_list)
+
+@login_required
+@app.route('/delete_residence/<int:residence_id>', methods=['POST'])
+def delete_residence(residence_id):
+    """
+    delete the residence with residence_id
+    """
+    residence = Residence.query.get_or_404(residence_id)
+    db.session.delete(residence)
+    db.session.commit()
+    return jsonify({'message': 'Residence deleted successfully'}), 201
