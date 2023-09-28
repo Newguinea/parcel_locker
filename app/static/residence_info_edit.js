@@ -43,3 +43,8 @@ $(document).ready(function () {
         });
     });
 });
+
+// route to residence list page
+document.getElementById("goBackButton").addEventListener("click", function() {
+  window.location.href = "/residence_list";
+});

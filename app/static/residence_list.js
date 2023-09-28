@@ -36,3 +36,12 @@ $(document).ready(function () {
         }
     });
 });
+
+// route of logout
+document.getElementById("logoutButton").addEventListener("click", function() {
+  window.location.href = "/logout";
+});
+// route to residence info add page
+document.getElementById("RegisterResidenceButton").addEventListener("click", function() {
+  window.location.href = "/residence_info_add_change";
+});

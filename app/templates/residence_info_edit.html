@@ -4,7 +4,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     </head>
     <body>
-    <button><a href="{{ url_for('residence_list') }}">go back</a></button>
+    <button id="goBackButton">go back</button>
     <div id="change-block">
         <form id="residence-form">
             <label for="first_name">First Name:</label>
@@ -32,6 +32,6 @@
         </form>
     </div>
 
-    <script src="{{ url_for('static', filename='residence_info_edit.js') }}"></script>
+    <script src="/static/residence_info_edit.js"></script>
     </body>
 {% endblock %}
