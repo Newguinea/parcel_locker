@@ -71,6 +71,12 @@ Customer Service Team
 def send_message(text, email_address, firstname):
     try:
         email_terminal = firstname + "<" + email_address + ">"
+        print(
+            {"from": "smart-locker-box <notification.noreply@smart-locker-box.com>",
+                  "to": email_terminal,
+                  "subject": "You have a new parcel in box",
+                  "text": text})
+
         result = requests.post(
             "https://api.mailgun.net/v3/sandbox9fdc432bf42b4f54b4a0ec5582a80102.mailgun.org/messages",
             auth=("api", api_key),
