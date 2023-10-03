@@ -91,9 +91,24 @@ def send_message(text, email_address, firstname):
             "text": text})
     return str(result)
 
-def main():
-    return 0
+def main(phoneNumber):
+    #get the recipient info
+    recipientinfo = getrecipientinfo(phoneNumber)
+    #parse the json
+    recipientinfo = json.loads(recipientinfo)
+    #check if the phone number is found
+    if recipientinfo['status'] == 'success':
+        #get the first name and email
+        firstname = recipientinfo['first_name']
+        email = recipientinfo['email']
+        #generate the text
+        text = genText(firstname)
+        #send the message
+        result = send_message(text, email, firstname)
+        print(result)
+    else:
+        print(recipientinfo['message'])
 
 
 if __name__ == '__main__':
-    main()
+    main("0466628549")
