@@ -1,45 +1,39 @@
-import requests as requests
+import requests
 import datetime
 import json
 import sqlite3
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+api_key = os.environ.get("API_KEY")
+
+if not api_key:
+    print("Error: API_KEY not found in environment variables")
+    exit(1)
 
 def getrecipientinfo(phoneNumber):
-    """
-    Retrieve the first name and email associated with a given phone number from the database.
+    try:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        db_path = os.path.join(script_dir, '../app.db')
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute("SELECT first_name, email FROM residence WHERE phone_no=?", (phoneNumber,))
+        row = cursor.fetchone()
+        conn.close()
 
-    :param str phoneNumber: The phone number to search for in the database.
-    :return: A JSON object containing either the successful output with the first name and email,
-             or a failure message if the phone number is not found.
-    :rtype: json
-    """
-    # get the directory of this script
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    db_path = os.path.join(script_dir, '../app.db')
+        output = {}
+        if row:
+            output['status'] = 'success'
+            output['first_name'] = row[0]
+            output['email'] = row[1]
+        else:
+            output['status'] = 'failure'
+            output['message'] = 'Phone number not found'
+        return json.dumps(output, indent=4)
 
-    # connect to the database
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-
-    # execute the query
-    cursor.execute("SELECT first_name, email FROM residence WHERE phone_no=?", (phoneNumber,))
-
-    # got the result
-    row = cursor.fetchone()
-
-    # close the connection
-    conn.close()
-
-    output = {}
-    if row:
-        output['status'] = 'success'
-        output['first_name'] = row[0]
-        output['email'] = row[1]
-    else:
-        output['status'] = 'failure'
-        output['message'] = 'Phone number not found'
-
-    return json.dumps(output, indent=4)
+    except sqlite3.Error as e:
+        return json.dumps({"status": "failure", "message": f"Database error: {str(e)}"}, indent=4)
 
 def genText(firstname):
     """
@@ -73,37 +67,35 @@ Customer Service Team
 
     return text
 
+
 def send_message(text, email_address, firstname):
-    """
-    :param text: the main body of the email
-    :param email_address: format: "23424251@student.uwa.edu.au"
-    :return:
-    <Response [200]> for success
-    others for failure
-    """
-    email_terminal = firstname + "<" + email_address + ">"
-    result = requests.post(
-        "https://api.mailgun.net/v3/sandbox9fdc432bf42b4f54b4a0ec5582a80102.mailgun.org/messages",
-        auth=("api", "0659ac7fa6d863191bcf2bc65de68b17-77316142-96a02996"),
-        data={"from": "smart-locker-box <notification.noreply@smart-locker-box.com>",
-            "to": email_terminal,
-            "subject": "You have a new parcel in box",
-            "text": text})
-    return str(result)
+    try:
+        email_terminal = firstname + "<" + email_address + ">"
+        result = requests.post(
+            "https://api.mailgun.net/v3/sandbox9fdc432bf42b4f54b4a0ec5582a80102.mailgun.org/messages",
+            auth=("api", api_key),
+            data={"from": "smart-locker-box <notification.noreply@smart-locker-box.com>",
+                  "to": email_terminal,
+                  "subject": "You have a new parcel in box",
+                  "text": text})
+
+        if result.status_code == 200:
+            return "Success: " + str(result)
+        else:
+            return "Failure: " + str(result)
+
+    except requests.RequestException as e:
+        return f"Failed to send email: {str(e)}"
+
 
 def main(phoneNumber):
-    #get the recipient info
     recipientinfo = getrecipientinfo(phoneNumber)
-    #parse the json
     recipientinfo = json.loads(recipientinfo)
-    #check if the phone number is found
+
     if recipientinfo['status'] == 'success':
-        #get the first name and email
         firstname = recipientinfo['first_name']
         email = recipientinfo['email']
-        #generate the text
         text = genText(firstname)
-        #send the message
         result = send_message(text, email, firstname)
         print(result)
     else:
