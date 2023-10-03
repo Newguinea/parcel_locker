@@ -1,0 +1,23 @@
+Subject: Package Delivery Notification for $(Recipient_Name)
+
+Dear $(Recipient_Name),
+
+We are pleased to inform you that a package has been delivered and is now available for pick-up at our parcel locker location.
+
+Contact Number:
+$(Contact_Number)
+
+Time of Parcel Arrival:
+$(Time_of_Parcel_Arrival)
+
+Please ensure to collect your package within the specified time window. Failure to do so may result in the package being returned to the sender.
+
+To retrieve your package, you'll need to provide valid identification that matches the name on the package.
+
+If you have any questions or require further assistance, please do not hesitate to contact us at $(Customer_Service_Email) or call us at $(Customer_Service_Number).
+
+Thank you for using our services.
+
+Best regards,
+Smart Parcel locker team
+Customer Service Team
