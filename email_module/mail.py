@@ -67,20 +67,13 @@ Customer Service Team
 
     return text
 
-
 def send_message(text, email_address, firstname):
     try:
         email_terminal = firstname + "<" + email_address + ">"
-        print(
-            {"from": "smart-locker-box <notification.noreply@smart-locker-box.com>",
-                  "to": email_terminal,
-                  "subject": "You have a new parcel in box",
-                  "text": text})
-
         result = requests.post(
-            "https://api.mailgun.net/v3/sandbox9fdc432bf42b4f54b4a0ec5582a80102.mailgun.org/messages",
+            "https://api.mailgun.net/v3/vault.as4134.com/messages",
             auth=("api", api_key),
-            data={"from": "smart-locker-box <notification.noreply@smart-locker-box.com>",
+            data={"from": "smart-locker-box <notify@vault.as4134.com>",
                   "to": email_terminal,
                   "subject": "You have a new parcel in box",
                   "text": text})
@@ -92,7 +85,6 @@ def send_message(text, email_address, firstname):
 
     except requests.RequestException as e:
         return f"Failed to send email: {str(e)}"
-
 
 def main(phoneNumber):
     recipientinfo = getrecipientinfo(phoneNumber)
