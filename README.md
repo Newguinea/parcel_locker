@@ -80,3 +80,6 @@ flask run --debug
 ```
 
 Visit `http://localhost:5000` in your web browser to view the application.
+
+## Email module
+the key of emailgun is in .env file, you can change it to your own key.
