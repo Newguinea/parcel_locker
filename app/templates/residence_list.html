@@ -2,17 +2,19 @@
     <head>
         <title>all resident</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <link rel="stylesheet" href="/static/residence_list.css">
     </head>
     <body>
     <!-- Logout button -->
-    <button id="logoutButton">Logout</button>
-{#    <button><a href="{{ url_for('logout') }}">Logout</a></button>#}
-    <br>
+    <div class="header">
+        <h1>Resident List</h1>
+        <button id="logoutButton">Logout</button>
+    </div>
     <!-- Register new residence button -->
     <button id="RegisterResidenceButton">Register New Residence</button>
-{#    <button><a href="{{ url_for('residence_info') }}">Register New Residence</a></button>#}
-    <div id="list_residence"></div>
 
+
+    <div id="list_residence"></div>
     <script src="/static/residence_list.js"></script>
     </body>
 {% endblock %}

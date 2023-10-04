@@ -27,22 +27,22 @@ body {
     padding: 10px;
 }
 
-#residenceForm {
+#change-block {
     background-color: #fff;
     max-width: 600px;
-    margin: 0 auto;
+    margin: 0px auto;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
 }
 
-#residenceForm label {
+#residence-form label {
     display: block;
     margin-bottom: 4px;
     font-weight: bold;
 }
 
-#residenceForm input {
+#residence-form input {
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;
@@ -50,7 +50,7 @@ body {
     border-radius: 4px;
 }
 
-#residenceForm button {
+#residence-form button {
     display: block;
     width: 100%;
     padding: 10px;
@@ -62,7 +62,7 @@ body {
     transition: background-color 0.3s ease;
 }
 
-#residenceForm button:hover {
+#residence-form button:hover {
     background-color: #6a1fb9;
 }
 
