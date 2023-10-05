@@ -49,7 +49,7 @@ def logout():
 @app.route('/residences', methods=['POST'])
 def create_residence():
     """
-    for creating the residence data in the database, data from residence_info_add_change
+    for creating the residence data in the database, data from residence_info_add
     example request:
     {
     "first_name": "John",
@@ -79,9 +79,9 @@ def create_residence():
 
 
 @login_required
-@app.route('/residence_info_add_change')
+@app.route('/residence_info_add')
 def residence_info():
-    return render_template('residence_info_add_change.html')
+    return render_template('residence_info_add.html')
 
 
 @login_required
