@@ -1,21 +1,30 @@
 $(document).ready(function () {
     const urlParts = window.location.pathname.split('/');
     const residence_id = urlParts[urlParts.length - 1];
-    console.log("Residence ID: ", residence_id);  // Debug line
+    // console.log("Residence ID: ", residence_id);  // Debug line
 
     if (residence_id) {
         // get information about the residence
         $.ajax({
-            url: `/residence_info_get/${residence_id}`,
+            url: `/residences/${residence_id}`,
             method: 'GET',
             success: function (response) {
-                $('#first_name').val(response.first_name);
-                $('#last_name').val(response.last_name);
-                $('#email').val(response.email);
-                $('#phone_no').val(response.phone_no);
-                $('#unit_num').val(response.unit_num);
-                $('#room_no').val(response.room_no);
-                $('#nfc_id').val(response.nfc_id);
+                if (response.data) {
+                    $('#first_name').val(response.data.first_name);
+                    $('#last_name').val(response.data.last_name);
+                    $('#email').val(response.data.email);
+                    $('#phone_no').val(response.data.phone_no);
+                    $('#unit_num').val(response.data.unit_num);
+                    $('#room_no').val(response.data.room_no);
+                    $('#nfc_id').val(response.data.nfc_id);
+                }
+            },
+            error: function (jqXHR) {
+                if (jqXHR.responseJSON && jqXHR.responseJSON.error && jqXHR.responseJSON.error.message) {
+                    alert('Error: ' + jqXHR.responseJSON.error.message);
+                } else {
+                    alert('An error occurred while fetching the residence info.');
+                }
             }
         });
     }
@@ -39,12 +48,19 @@ $(document).ready(function () {
             data: JSON.stringify(data),
             success: function (response) {
                 alert(response.message);
+            },
+            error: function (jqXHR) {
+                if (jqXHR.responseJSON && jqXHR.responseJSON.error && jqXHR.responseJSON.error.message) {
+                    alert('Error: ' + jqXHR.responseJSON.error.message);
+                } else {
+                    alert('An error occurred while updating the residence.');
+                }
             }
         });
     });
 });
 
 // route to residence list page
-document.getElementById("goBackButton").addEventListener("click", function() {
-  window.location.href = "/residence_list";
+document.getElementById("goBackButton").addEventListener("click", function () {
+    window.location.href = "/residence_list";
 });

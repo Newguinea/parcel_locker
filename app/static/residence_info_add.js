@@ -9,25 +9,29 @@ $(document).ready(function() {
             "phone_no": $("#phone_no").val(),
             "unit_num": parseInt($("#unit_num").val()),
             "room_no": $("#room_no").val(),
-            "nfc_id": $("#nfc_id").val() // can be empty
+            "nfc_id": $("#nfc_id").val()
         };
 
         $.ajax({
-            url: "/residences",  // Flask API endpoint
+            url: "/residences",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify(formData),
             success: function(response) {
                 alert("Residence created successfully");
-                // clear the form
                 $("#residenceForm")[0].reset();
             },
-            error: function(error) {
-                alert("An error occurred: " + JSON.stringify(error));
+            error: function(jqXHR) {
+                if (jqXHR.responseJSON && jqXHR.responseJSON.error && jqXHR.responseJSON.error.message) {
+                    alert('Error: ' + jqXHR.responseJSON.error.message);
+                } else {
+                    alert('An error occurred while trying to create the residence.');
+                }
             }
         });
     });
 });
+
 
 // route to residence list page
 document.getElementById("goBackButton").addEventListener("click", function() {
