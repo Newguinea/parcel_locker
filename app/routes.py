@@ -1,19 +1,15 @@
 # routes.py
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from werkzeug.exceptions import NotFound
-from app import app
-from app.models import User
-from flask_login import login_required, LoginManager
-from flask_login import current_user, login_user, logout_user
-from app.models import Residence
-from app import db
-from flask import jsonify, make_response
+from app import app, db
+from app.models import User,Residence
+from flask_login import login_required, LoginManager, current_user, login_user, logout_user
 
 # Initialize LoginManager
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-
+###############################################login###############################################
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -45,7 +41,24 @@ def logout():
     return redirect(url_for('login'))
 
 
-###############################################login above###############################################
+###############################################render templates###############################################
+@login_required
+@app.route('/residence_info_add')
+def residence_info():
+    return render_template('residence_info_add.html')
+
+
+@login_required
+@app.route('/residence_list')
+def residence_list():
+    return render_template('residence_list.html')
+
+@login_required
+@app.route('/residence/<int:residence_id>', methods=['GET'])
+def edit_residence_page(residence_id):
+    return render_template('residence_info_edit.html', residence_id=residence_id)
+
+###############################################others data CRUD###############################################
 @login_required
 @app.route('/residences', methods=['POST'])
 def create_residence():
@@ -79,46 +92,8 @@ def create_residence():
         return jsonify({"error": {"message": "Internal server error: " + str(e), "code": 500}}), 500
 
 
-@login_required
-@app.route('/residence_info_add')
-def residence_info():
-    return render_template('residence_info_add.html')
 
 
-@login_required
-@app.route('/residence_list')
-def residence_list():
-    return render_template('residence_list.html')
-
-
-@login_required
-@app.route('/residence_list_data')
-def residence_list_data():
-    try:
-        residences = Residence.query.all()
-        residence_list = []
-
-        for residence in residences:
-            residence_data = {
-                'id': residence.id,
-                'name': f"{residence.last_name} {residence.first_name}",
-                'room_no': residence.room_no,
-                'email': residence.email
-            }
-            residence_list.append(residence_data)
-
-        return make_response(jsonify({
-            "data": residence_list,
-            "message": "Success"
-        }), 200)
-
-    except Exception as e:
-        return make_response(jsonify({
-            "error": {
-                "message": str(e),
-                "code": 500  # Internal Server Error
-            }
-        }), 500)
 
 @login_required
 @app.route('/delete_residence/<int:residence_id>', methods=['POST'])
@@ -163,30 +138,3 @@ def edit_residence(residence_id):
         return jsonify({'message': 'Residence changed successfully'}), 200  # Use 200 OK for successful updates
     except Exception as e:
         return jsonify({"error": {"message": "Internal server error: " + str(e), "code": 500}}), 500
-
-
-@login_required
-@app.route('/residences/<int:residence_id>', methods=['GET'])
-def get_residence(residence_id):
-    """
-    get all the information of the residence with residence_id
-    """
-    residence = Residence.query.get_or_404(residence_id)
-    return jsonify({
-        'message': 'Success',
-        'data': {
-            'first_name': residence.first_name,
-            'last_name': residence.last_name,
-            'email': residence.email,
-            'phone_no': residence.phone_no,
-            'unit_num': residence.unit_num,
-            'room_no': residence.room_no,
-            'nfc_id': residence.nfc_id
-        }
-    }), 200
-
-
-@login_required
-@app.route('/residence/<int:residence_id>', methods=['GET'])
-def edit_residence_page(residence_id):
-    return render_template('residence_info_edit.html', residence_id=residence_id)
