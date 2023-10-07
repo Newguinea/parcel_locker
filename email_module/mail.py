@@ -3,6 +3,8 @@ import datetime
 import json
 import sqlite3
 import os
+import random
+import string
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,7 +14,18 @@ if not api_key:
     print("Error: API_KEY not found in environment variables")
     exit(1)
 
+
 def getrecipientinfo(phoneNumber):
+    """
+    Get the recipient's information from the database.
+    :param phoneNumber:
+    :return format:
+    {
+        "status": "success",
+        "first_name": "John",
+        "email": "
+    }
+    """
     try:
         script_dir = os.path.dirname(os.path.abspath(__file__))
         db_path = os.path.join(script_dir, '../app.db')
@@ -35,7 +48,8 @@ def getrecipientinfo(phoneNumber):
     except sqlite3.Error as e:
         return json.dumps({"status": "failure", "message": f"Database error: {str(e)}"}, indent=4)
 
-def genText(firstname):
+
+def genText(firstname, code):
     """
     Generate the text of the email to be sent to the recipient.
     :param name: The name of the recipient
@@ -48,6 +62,8 @@ def genText(firstname):
     text = f"""Dear {firstname},
 
 We are pleased to inform you that a package has been delivered and is now available for pick-up at our parcel locker location.
+
+pickup code: {code}
 
 Time of Parcel Arrival:
 {current_time}
@@ -67,7 +83,18 @@ Customer Service Team
 
     return text
 
+
 def send_message(text, email_address, firstname):
+    """
+    Send the email to the recipient.
+    :param text: the text of the email
+    :param email_address:
+    :param firstname:
+    :return: {
+        "status": "success",
+        "message": "Email sent successfully"
+    }
+    """
     try:
         email_terminal = firstname + "<" + email_address + ">"
         result = requests.post(
@@ -79,26 +106,58 @@ def send_message(text, email_address, firstname):
                   "text": text})
 
         if result.status_code == 200:
-            return "Success: " + str(result)
+            return {
+                "status": "success",
+                "message": "Email sent successfully"
+            }
         else:
-            return "Failure: " + str(result)
+            return {
+                "status": "failure",
+                "message": f"Failed to send email: {result.text}"
+            }
 
     except requests.RequestException as e:
-        return f"Failed to send email: {str(e)}"
+        return {
+            "status": "failure",
+            "message":f"Failed to send email: {str(e)}"
+        }
+
+
+def getRandomcode4():
+    """
+    Generate a random 4-digit code.
+    :return: The generated code
+    """
+    return ''.join(random.choice(string.digits) for _ in range(4))
+
 
 def main(phoneNumber):
+    """
+    :param phoneNumber:
+    :return:
+    a json format data
+    {
+        "status": "success",
+        "code": "1234"
+    }
+    """
     recipientinfo = getrecipientinfo(phoneNumber)
     recipientinfo = json.loads(recipientinfo)
 
     if recipientinfo['status'] == 'success':
         firstname = recipientinfo['first_name']
         email = recipientinfo['email']
-        text = genText(firstname)
+        code = getRandomcode4()
+        text = genText(firstname, code)
         result = send_message(text, email, firstname)
-        print(result)
-    else:
-        print(recipientinfo['message'])
+        if result['status'] == 'success':
+            return json.dumps({"status": "success", "code": code}, indent=4)
+        else:
+            return json.dumps(result, indent=4)
+
+    elif recipientinfo['status'] == 'failure':
+      return json.dumps(recipientinfo, indent=4)  # return the error message
 
 
 if __name__ == '__main__':
-    main("0466628549")
+    print(main("046649"))
