@@ -17,6 +17,7 @@ def getMostRecentRecords():
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         cursor.execute("SELECT nfc_id, code, id FROM log ORDER BY timestamp DESC WHERE is_taken=0 LIMIT 1")
+
         row = cursor.fetchone()
         conn.close()
 
@@ -84,4 +85,4 @@ def main():
         return False
 
 if __name__ == "__main__":
-    print(setParcelis_taken(1))
+    print(getMostRecentRecords())
