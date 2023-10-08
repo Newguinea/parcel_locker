@@ -73,10 +73,10 @@ python add_user.py
 
 ### Running the Application
 
-To run the application, execute:
+To run the application, in the root of the folder execute:
 
 ```bash
-flask run --debug
+python app.py
 ```
 
 Visit `http://localhost:5000` in your web browser to view the application.
