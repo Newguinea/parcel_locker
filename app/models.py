@@ -28,9 +28,16 @@ class Residence(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(64))
     last_name = db.Column(db.String(64))
-    email = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True)
     # phone_no = db.Column(db.String(20), nullable=False)
     phone_no = db.Column(db.String(20), nullable=False, unique=True)
     unit_num = db.Column(db.Integer, nullable=False)
     room_no = db.Column(db.String(10), nullable=False)
-    nfc_id = db.Column(db.String(100))
+    nfc_id = db.Column(db.String(100), unique=True)
+
+class Log(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nfc_id = db.Column(db.String(8), nullable=False)
+    code = db.Column(db.Integer, nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False)
+    is_taken = db.Column(db.Boolean, nullable=False, default=False)
