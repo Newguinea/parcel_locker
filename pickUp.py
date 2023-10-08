@@ -16,7 +16,7 @@ def getMostRecentRecords():
         db_path = os.path.join(script_dir, './app.db')
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
-        cursor.execute("SELECT nfc_id, code, id FROM log ORDER BY timestamp DESC WHERE is_taken=0 LIMIT 1")
+        cursor.execute("SELECT nfc_id, code, id FROM log WHERE is_taken=0 ORDER BY timestamp DESC LIMIT 1")
 
         row = cursor.fetchone()
         conn.close()
