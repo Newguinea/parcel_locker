@@ -2,6 +2,8 @@ from flask_login import login_required
 from app import app
 from flask import jsonify, make_response
 from app.models import Residence
+from PiLocker_Fake import getUID # change this to the following line when running on the Raspberry Pi
+# from PiLocker import getUID
 
 @login_required
 @app.route('/residences/<int:residence_id>', methods=['GET'])
@@ -95,7 +97,7 @@ def getNFCID():
     get a NFC ID from the hardware
     :return:
     """
-    NFCid = "0433682441"
+    NFCid = getUID()
     # call NFCid here, please change the line below
     if NFCid:
         if NFCid == "00000000":

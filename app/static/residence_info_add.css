@@ -83,21 +83,3 @@ body {
 h1 {
     color: var(--purple-color);
 }
-
-#residenceForm label[for="nfc_id"],
-#residenceForm button[type="button"] {
-    display: inline-flex;
-    vertical-align: middle;  /* To make sure the button and label are vertically centered with each other */
-}
-
-#residenceForm label[for="nfc_id"] {
-    width: auto;  /* Overrides the block display, so it takes only as much width as it needs */
-    margin-right: 10px; /* Adds some space between the label and the button */
-}
-
-#residenceForm button[type="button"] {
-    width: auto;  /* Overrides the full width */
-    padding: 10px 15px;  /* Adjust padding for better appearance */
-    margin-right: 20px; /* Adds some space between the button and the input */
-}
-
