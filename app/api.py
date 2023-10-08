@@ -87,3 +87,19 @@ def residence_list_data():
                 "code": 500  # Internal Server Error
             }
         }), 500)
+
+@login_required
+@app.route('/getNFCID', methods=['GET'])
+def getNFCID():
+    """
+    get a NFC ID from the hardware
+    :return:
+    """
+    NFCid = "0433682441"
+    # call NFCid here, please change the line below
+    if NFCid:
+        if NFCid == "00000000":
+            return jsonify({"status": "failure", "message": "Error"})
+        return jsonify({"status": "success", "NFCid": NFCid})
+    else:
+        return jsonify({"status": "failure", "message": "Error"})
