@@ -23,7 +23,8 @@ def getrecipientinfo(phoneNumber):
     {
         "status": "success",
         "first_name": "John",
-        "email": "
+        "email": ""
+        nfc_id: ""
     }
     """
     try:
@@ -31,7 +32,7 @@ def getrecipientinfo(phoneNumber):
         db_path = os.path.join(script_dir, '../app.db')
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
-        cursor.execute("SELECT first_name, email FROM residence WHERE phone_no=?", (phoneNumber,))
+        cursor.execute("SELECT first_name, email, nfc_id FROM residence WHERE phone_no=?", (phoneNumber,))
         row = cursor.fetchone()
         conn.close()
 
@@ -40,6 +41,7 @@ def getrecipientinfo(phoneNumber):
             output['status'] = 'success'
             output['first_name'] = row[0]
             output['email'] = row[1]
+            output['nfc_id'] = row[2]
         else:
             output['status'] = 'failure'
             output['message'] = 'Phone number not found'
@@ -130,6 +132,29 @@ def getRandomcode4():
     """
     return ''.join(random.choice(string.digits) for _ in range(4))
 
+def putLog(nfc_id, code, is_taken=False):
+    """
+    Put the log into the database.
+    :param nfc_id:
+    :param code:
+    :param is_taken:
+    :return:
+    """
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        db_path = os.path.join(script_dir, '../app.db')
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO log (nfc_id, code, timestamp, is_taken) VALUES (?, ?, ?, ?)",
+                       (nfc_id, code, timestamp, is_taken))
+        conn.commit()
+        conn.close()
+        return True
+
+    except sqlite3.Error as e:
+        print(f"Database error: {str(e)}")
+        return False
 
 def main(phoneNumber):
     """
@@ -138,7 +163,8 @@ def main(phoneNumber):
     a json format data
     {
         "status": "success",
-        "code": "1234"
+        "code": 1234,
+        "nfc_id": "12345678"
     }
     """
     recipientinfo = getrecipientinfo(phoneNumber)
@@ -147,11 +173,13 @@ def main(phoneNumber):
     if recipientinfo['status'] == 'success':
         firstname = recipientinfo['first_name']
         email = recipientinfo['email']
+        nfc_id = recipientinfo['nfc_id']
         code = getRandomcode4()
         text = genText(firstname, code)
         result = send_message(text, email, firstname)
+        putLog(nfc_id, code, is_taken=False)
         if result['status'] == 'success':
-            return json.dumps({"status": "success", "code": code}, indent=4)
+            return json.dumps({"status": "success", "code": code, "nfc_id": nfc_id}, indent=4)
         else:
             return json.dumps(result, indent=4)
 
