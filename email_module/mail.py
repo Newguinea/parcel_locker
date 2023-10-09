@@ -51,7 +51,7 @@ def getrecipientinfo(phoneNumber):
         return json.dumps({"status": "failure", "message": f"Database error: {str(e)}"}, indent=4)
 
 
-def genText(firstname, code):
+def notifyReceiveText(firstname, code):
     """
     Generate the text of the email to be sent to the recipient.
     :param name: The name of the recipient
@@ -175,7 +175,7 @@ def main(phoneNumber):
         email = recipientinfo['email']
         nfc_id = recipientinfo['nfc_id']
         code = getRandomcode4()
-        text = genText(firstname, code)
+        text = notifyReceiveText(firstname, code)
         result = send_message(text, email, firstname)
         putLog(nfc_id, code, is_taken=False)
         if result['status'] == 'success':
