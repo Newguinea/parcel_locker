@@ -2,13 +2,7 @@
 from app import app, db
 from app.models import User
 import threading
-import time
-
-def print_every_5_seconds():
-    """print 1 in terminal every 5 seconds"""
-    while True:
-        print("1")
-        time.sleep(5)
+from hardware_connection.hardware import print_every_5_seconds
 
 if __name__ == "__main__":
     """an example of running something and flask app at the same time"""
