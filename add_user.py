@@ -10,6 +10,17 @@ password = "123456"
 def main(username, email, password):
     """add a user to the database"""
     with app.app_context():
+        # Check if a user with the same username already exists
+        existing_username = User.query.filter_by(username=username).first()
+        if existing_username:
+            print("Error: Username already exists!")
+            return
+
+        # Check if a user with the same email already exists
+        existing_email = User.query.filter_by(email=email).first()
+        if existing_email:
+            print("Error: Email already exists!")
+            return
 
         # Create a new User object
         new_user = User(username=username, email=email)
@@ -22,8 +33,7 @@ def main(username, email, password):
 
         # Commit the transaction to the database
         db.session.commit()
-        print("user successfully added to database")
-
+        print("User successfully added to database")
 
 if __name__ == "__main__":
     main(username, email, password)
