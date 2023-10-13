@@ -8,7 +8,8 @@ from flask_login import login_required, current_user, login_user, logout_user
 ###############################################login###############################################
 @login_manager.user_loader
 def load_user(id):
-    return User.query.get(int(id))
+    return db.session.get(User, int(id))
+    # return User.query.get(int(id))
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -98,7 +99,9 @@ def delete_residence(residence_id):
     delete the residence with residence_id
     """
     try:
-        residence = Residence.query.get_or_404(residence_id)
+        #get residence by id
+        # residence = Residence.query.get_or_404(residence_id)
+        residence = Residence.query.filter_by(id=residence_id).first_or_404()
         db.session.delete(residence)
         db.session.commit()
         return '', 204  # No Content
@@ -113,7 +116,8 @@ def edit_residence(residence_id):
     """
     change the value of the residence with residence_id
     """
-    residence = Residence.query.get_or_404(residence_id)
+    residence = Residence.query.filter_by(id=residence_id).first_or_404()
+    # residence = Residence.query.get_or_404(residence_id)
     data = request.get_json()
 
     # Check for phone number uniqueness

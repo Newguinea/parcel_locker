@@ -25,7 +25,8 @@ def get_residence(residence_id):
         "message": "Success"
     }
     """
-    residence = Residence.query.get_or_404(residence_id)
+    # residence = Residence.query.get_or_404(residence_id)
+    residence = Residence.query.filter_by(id=residence_id).first_or_404()
     return jsonify({
         'message': 'Success',
         'data': {
