@@ -2,8 +2,8 @@ import unittest
 import json
 from app import app, db
 from app.models import User,Residence
-from flask_login import login_required, current_user, login_user, logout_user
-from flask import Flask, session
+from unittest.mock import patch
+
 
 class RoutesTestCase(unittest.TestCase):
     def setUp(self) -> None:
@@ -152,3 +152,35 @@ class APITestCase(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(data['message'], 'Success')
             self.assertEqual(len(data['data']), 2)
+
+    def test_getNFCID_success(self):
+        self.login()
+
+        with patch('app.api.getUID', return_value="12345678"):
+            response = self.app.get('/getNFCID')
+            data = json.loads(response.data)
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(data['status'], 'success')
+            self.assertEqual(data['NFCid'], '12345678')
+
+    def test_getNFCID_error(self):
+        self.login()
+
+        # Test for NFCid = "00000000"
+        with patch('app.api.getUID', return_value="00000000"):
+            response = self.app.get('/getNFCID')
+            data = json.loads(response.data)
+
+            self.assertEqual(response.status_code, 500)
+            self.assertEqual(data['status'], 'failure')
+            self.assertEqual(data['message'], 'Error')
+
+        # Test for NFCid = None
+        with patch('app.api.getUID', return_value=None):
+            response = self.app.get('/getNFCID')
+            data = json.loads(response.data)
+
+            self.assertEqual(response.status_code, 500)
+            self.assertEqual(data['status'], 'failure')
+            self.assertEqual(data['message'], 'Error')
