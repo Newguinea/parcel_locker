@@ -25,7 +25,8 @@ def get_residence(residence_id):
         "message": "Success"
     }
     """
-    residence = Residence.query.get_or_404(residence_id)
+    # residence = Residence.query.get_or_404(residence_id)
+    residence = Residence.query.filter_by(id=residence_id).first_or_404()
     return jsonify({
         'message': 'Success',
         'data': {
@@ -95,13 +96,17 @@ def residence_list_data():
 def getNFCID():
     """
     get a NFC ID from the hardware
-    :return:
+    :return
+    {
+        "NFCid": "12345678",
+        "status": "success"
+    }
     """
     NFCid = getUID()
     # call NFCid here, please change the line below
     if NFCid:
         if NFCid == "00000000":
-            return jsonify({"status": "failure", "message": "Error"})
-        return jsonify({"status": "success", "NFCid": NFCid})
+            return jsonify({"status": "failure", "message": "Error"}), 500
+        return jsonify({"status": "success", "NFCid": NFCid}), 200
     else:
-        return jsonify({"status": "failure", "message": "Error"})
+        return jsonify({"status": "failure", "message": "Error"}), 500

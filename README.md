@@ -83,3 +83,27 @@ Visit `http://localhost:5000` in your web browser to view the application.
 
 ## Email module
 the key of emailgun is in .env file, you can change it to your own key.
+
+## Running the Tests
+
+To ensure that the application is functioning as expected, a comprehensive suite of unit tests has been included. These tests cover everything from user authentication to CRUD operations for residences and API endpoints.
+
+### Running Unit Tests
+
+1. Navigate to the project root directory in your terminal.
+2. Execute the following command to run the tests:
+
+```shell
+python -m unittest tests/tests.py
+```
+This command will search for all tests in the project and run them. Upon completion, a summary of the tests will be displayed, including any failures or errors.
+
+It's recommended to run these tests frequently during development to catch any potential issues early on.
+
+## Built With
+
+* [Flask](http://flask.palletsprojects.com/) - The web framework used.
+* [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/) - An extension for Flask that simplifies database operations using SQLAlchemy.
+* [Flask-Migrate](https://flask-migrate.readthedocs.io/) - An extension for Flask that handles SQLAlchemy database migrations for Flask applications using Alembic.
+* [SQLite](https://www.sqlite.org/) - Lightweight database used for testing purposes.
+* [unittest](https://docs.python.org/3/library/unittest.html) - The standard library for building and running tests in Python.
