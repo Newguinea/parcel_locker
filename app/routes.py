@@ -1,13 +1,9 @@
 # routes.py
 from flask import render_template, flash, redirect, url_for, request, jsonify
 from werkzeug.exceptions import NotFound
-from app import app, db
+from app import app, db, login_manager
 from app.models import User,Residence
-from flask_login import login_required, LoginManager, current_user, login_user, logout_user
-
-# Initialize LoginManager
-login_manager = LoginManager()
-login_manager.init_app(app)
+from flask_login import login_required, current_user, login_user, logout_user
 
 ###############################################login###############################################
 @login_manager.user_loader
