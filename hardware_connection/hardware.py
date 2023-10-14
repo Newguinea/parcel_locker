@@ -32,18 +32,3 @@ def getLastUserCode():
                 'nfc_id': ''
             }
         }
-
-def putIteamToBox(mobile):
-    checkReceiver = getrecipientinfo(mobile)
-    if checkReceiver['status'] == 'success':
-        Hardware.sendToDisplay('please put the parcel into box', 1)
-        Hardware.openLocker()
-        Hardware.sendToDisplay('please close the door when finised', 2)
-        while True:
-
-
-    elif checkReceiver['status'] == 'failure':
-        Hardware.sendToDisplay(checkReceiver['message'], 1)
-
-    else:
-        Hardware.sendToDisplay('unknowerror', 1)
