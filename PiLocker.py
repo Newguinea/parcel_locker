@@ -43,11 +43,11 @@ class DoorControl:
             print(strength_str)
             if strength > threshold:
                 print('Strong Magnet! The locker is closed.')
-                self.door_status = True
+                self.door_status = False
                 return True
             else:
                 print('The locker is open.')
-                self.door_status = False
+                self.door_status = True
                 return False
 
     # relay
