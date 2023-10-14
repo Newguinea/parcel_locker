@@ -1,6 +1,7 @@
 import time
 from app.models import Log
-
+from email_module.mail import sendPickupNotice
+from PiLocker import Hardware
 def print_every_5_seconds():
     """print 1 in terminal every 5 seconds"""
     while True:
@@ -38,6 +39,12 @@ def getLastUserCode():
             }
         }
 
-def preparepercelIn(Mobile):
-    """get the data from Log table, is_taken = 0,timestamp is the latest"""
-    #TODO
+def putIteamToBox(mobile):
+    returnValue = sendPickupNotice(mobile)
+    if returnValue['status'] == 'success':
+        Hardware.sendToDisplay('Succeed', 1)
+        #TODO screen show succeed
+
+    elif returnValue['status'] == 'failure':
+        Hardware.sendToDisplay(returnValue['message'], 1)
+        #TODO screen message in the screen
