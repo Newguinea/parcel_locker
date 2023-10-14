@@ -1,12 +1,6 @@
-import time
 from app.models import Log
-from email_module.mail import sendPickupNotice
-from PiLocker import Hardware
-def print_every_5_seconds():
-    """print 1 in terminal every 5 seconds"""
-    while True:
-        print("1")
-        time.sleep(5)
+from email_module.mail import getrecipientinfo
+from PiLocker import DoorControl
 
 
 def getLastUserCode():
@@ -24,7 +18,7 @@ def getLastUserCode():
     log = Log.query.filter_by(is_taken=0).order_by(Log.timestamp.desc()).first()
     if log:
         return {
-            'code': 'Success',
+            'status': 'Success',
             'message': {
                 'code': log.code,
                 'nfc_id': log.nfc_id
@@ -32,7 +26,7 @@ def getLastUserCode():
         }
     else:
         return {
-            'code': 'Not_Found',
+            'status': 'Not_Found',
             'message': {
                 'code': '',
                 'nfc_id': ''
@@ -40,11 +34,16 @@ def getLastUserCode():
         }
 
 def putIteamToBox(mobile):
-    returnValue = sendPickupNotice(mobile)
-    if returnValue['status'] == 'success':
-        Hardware.sendToDisplay('Succeed', 1)
-        #TODO screen show succeed
+    checkReceiver = getrecipientinfo(mobile)
+    if checkReceiver['status'] == 'success':
+        Hardware.sendToDisplay('please put the parcel into box', 1)
+        Hardware.openLocker()
+        Hardware.sendToDisplay('please close the door when finised', 2)
+        while True:
 
-    elif returnValue['status'] == 'failure':
-        Hardware.sendToDisplay(returnValue['message'], 1)
-        #TODO screen message in the screen
+
+    elif checkReceiver['status'] == 'failure':
+        Hardware.sendToDisplay(checkReceiver['message'], 1)
+
+    else:
+        Hardware.sendToDisplay('unknowerror', 1)

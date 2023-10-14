@@ -2,12 +2,32 @@
 from app import app, db
 from app.models import User
 import threading
-from hardware_connection.hardware import print_every_5_seconds
+from PiLocker import DoorControl, PiLockerSystem
+
+# hardware_instance = None  # global variable
+# """
+# example of get value of global variable
+#
+# import app
+# status = app.hardware_instance.door_status
+# print("Door status:", status)
+# """
+
+# def startHallSensorInThread():
+#     """start the hall sensor in a thread"""
+#     global hardware_instance
+#     hardware = DoorControl()
+#     thread = threading.Thread(target=hardware.runSensor)
+#     thread.start()
+#     hardware_instance = hardware
+#     return hardware
+
 
 if __name__ == "__main__":
-    """an example of running something and flask app at the same time"""
-    t = threading.Thread(target=print_every_5_seconds)
-    t.daemon = True  # Set the thread as a daemon thread to ensure it exits when the program exits.
-    t.start()
-    #flask app debug mode
-    app.run(debug=True)
+    # sensor_instance = startHallSensorInThread()
+
+    # Create and start PiLockerSystem
+    pi_locker_system = PiLockerSystem()
+    pi_locker_system.start()
+
+    app.run(debug=True)#run flask here

@@ -26,6 +26,10 @@ def getrecipientinfo(phoneNumber):
         "email": ""
         nfc_id: ""
     }
+    {
+        "status": "failure",
+        "message": "Phone number not found"
+    }
     """
     try:
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -194,4 +198,4 @@ def sendPickupNotice(phoneNumber):
 
 
 if __name__ == '__main__':
-    print(sendPickupNotice("0466628549"))
+    print(getrecipientinfo("0466628549"))
