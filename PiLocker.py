@@ -17,7 +17,10 @@ pn532 = NFC.PN532("/dev/ttyUSB0")
 display = create_PiicoDev_SSD1306()
 camera = PiCamera()
 
-
+# This class is responsible for controlling the door.
+# The isLockerClosed method checks whether the locker is closed. It makes a determination by detecting magnetic field strength.
+# The openLocker method uses a relay to open the locker door.
+# There are two additional methods, set_box_is_empty and set_box_is_not_empty, used to set the status of the locker.
 class DoorControl:
     #variables
     def __init__(self):
@@ -33,7 +36,7 @@ class DoorControl:
         else, return False
         :return:
         """
-        sleep(7000)
+        sleep(5)
         while True:
             strength = magSensor.readMagnitude()
             strength_str = str(strength) + ' uT'
@@ -65,12 +68,12 @@ class DoorControl:
             sleep(5)
             GPIO.cleanup()
 
-    def runSensor(self):
-        """run isLockerClosed function in a thread, 5 seconds per loop"""
-        while True:
-            self.isLockerClosed()
-            print(f"Current magnetic strength: {self.door_status} uT")
-            time.sleep(5)
+    # def runSensor(self):
+    #     """run isLockerClosed function in a thread, 5 seconds per loop"""
+    #     while True:
+    #         self.isLockerClosed()
+    #         print(f"Current magnetic strength: {self.door_status} uT")
+    #         time.sleep(5)
 
     def set_box_is_empty(self):
         self.box_is_empty = True
@@ -79,12 +82,18 @@ class DoorControl:
         self.box_is_empty = False
 
 
-
+# This class is responsible for the overall operation of the PiLocker system.
+# The start method describes the workflow of the locker, such as when a delivery person drops off a package and when a user picks up a package.
+# The waitForUnlock method waits for a user to input a code or use an NFC tag to unlock.
+# The getUID method is used to read the UID of the NFC tag.
+# The sendToDisplay method displays information on the OLED screen.
+# The takePhoto method captures photos using a camera.
+# The pinpadCode and pinpadMobile methods get user input from a keypad, but in practice, they need to be integrated with the actual keypad hardware.
 class PiLockerSystem:
     def __init__(self):
         self.hardware = DoorControl()
-        self.thread = threading.Thread(target=self.hardware.runSensor)
-        self.thread.start()
+        # self.thread = threading.Thread(target=self.hardware.runSensor)
+        # self.thread.start()
 
     def start(self):
         while True:
@@ -131,8 +140,8 @@ class PiLockerSystem:
 
     def waitForUnlock(self):
         q = queue.Queue()
-        t1 = threading.Thread(target=self.getNFCInput, args=(q,))
-        t2 = threading.Thread(target=self.getPinpadInput, args=(q,))
+        t1 = threading.Thread(target=self.getUID, args=(q,))
+        t2 = threading.Thread(target=self.pinpadCode, args=(q,))
         t1.start()
         t2.start()
 
@@ -145,7 +154,7 @@ class PiLockerSystem:
                 self.hardware.box_is_empty = True
                 sleep(5)
             else:
-                self.sendToDisplay("wrong nfc tag", 1)
+                self.sendToDisplay("Invalid NFC tag detected", 1)
                 sleep(5)
         else:
             # if value is same as getLastUserCode
@@ -155,7 +164,7 @@ class PiLockerSystem:
                 self.hardware.box_is_empty = True
                 sleep(5)
             else:
-                self.sendToDisplay("wrong code", 1)
+                self.sendToDisplay("Incorrect code entered", 1)
                 sleep(5)
 
 
@@ -166,7 +175,7 @@ class PiLockerSystem:
         :return:
         """
         try:
-            uid = pn532.read_passive_target(timeout=5000)
+            uid = pn532.read_passive_target(timeout=5)
             uid = "".join("%02X" % i for i in uid)[:-1]
             return uid
         except Exception as e:
@@ -178,7 +187,7 @@ class PiLockerSystem:
 
 
     # oled display
-    def sendToDisplay(text,line):
+    def sendToDisplay(self, text, line):
         """
         display the text on the oled screen(128x64 pixels),(4 lines, 16 characters per line)
         :param text: the text to be displayed
@@ -212,6 +221,9 @@ class PiLockerSystem:
         return code
 
     def pinpadMobile(self):
-        """"""
+        """
+        TODO: get the input from the pinpad
+        :return:
+        """
         mobile = input("Please enter your mobile: ")
         return mobile
