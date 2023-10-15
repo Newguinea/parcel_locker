@@ -28,10 +28,10 @@ for pin in COL_PINS:
 
 # Define keypad layout
 KEYS = [
-    ['1', '2', '3'],
-    ['4', '5', '6'],
-    ['7', '8', '9'],
-    ['*', '0', '#']
+    ['0', '0', '0'],
+    ['0', '0', '0'],
+    ['0', '0', '0'],
+    ['0', '0', '0']
 ]
 
 def get_key():
@@ -39,24 +39,22 @@ def get_key():
         GPIO.output(pin, GPIO.LOW)
         for j, col_pin in enumerate(COL_PINS):
             if GPIO.input(col_pin) == GPIO.LOW:
-                time.sleep(0.5)  # Debounce
+                time.sleep(0.2)  # Debounce
                 return KEYS[i][j]
 
 def keyinputs(num_digits):
     """get the num of digits from the keypad, if the user press the * key, reset the input"""
+    GPIO.setmode(GPIO.BCM)
     output = ""
-    try:
-        #if lenth of the output is less than num_digits, keep getting the input
-        while len(output) <= num_digits:
-            key = get_key()
-            if key == "*":
-                output = ""
-            else:
-                #combine output and key together
-                output = output + str(key)
-        return output        
-    except Exception:
-        GPIO.cleanup()
+    #if lenth of the output is less than num_digits, keep getting the input
+    while len(output) < num_digits:
+        key = get_key()
+        if key == "*":
+            output = ""
+        elif key is not None:
+            #combine output and key together
+            output = output + str(key)
+    return output        
 
 
 # This class is responsible for controlling the door.
@@ -78,11 +76,11 @@ class DoorControl:
         else, return False
         :return:
         """
-        sleep(5)
         while True:
             strength = magSensor.readMagnitude()
             strength_str = str(strength) + ' uT'
             print(strength_str)
+            sleep(1)
             if strength > threshold:
                 print('Strong Magnet! The locker is closed.')
                 self.door_status = False
@@ -107,8 +105,7 @@ class DoorControl:
             return False
 
         finally:
-            sleep(5)
-            GPIO.cleanup()
+            pass
 
     # def runSensor(self):
     #     """run isLockerClosed function in a thread, 5 seconds per loop"""
@@ -138,7 +135,7 @@ class PiLockerSystem:
         # self.thread.start()
 
     def start(self):
-        print("doorsystem starts")
+        # print("doorsystem starts")
         while True:
             # no things in the box
             if self.hardware.box_is_empty == True:
@@ -147,7 +144,7 @@ class PiLockerSystem:
                     self.sendToDisplay("please input phone number", 1)
                     mobileInput = self.pinpadMobile()
                     #check the mobile number is in the database or not
-                    checkReceiver = getrecipientinfo(mobileInput)
+                    checkReceiver = eval(getrecipientinfo(mobileInput))
                     if checkReceiver['status'] == 'success':
                         self.hardware.openLocker()
                         self.sendToDisplay("please close the door when finised", 1)
@@ -157,13 +154,13 @@ class PiLockerSystem:
                             if self.hardware.isLockerClosed() == True:
                                 self.hardware.set_box_is_not_empty()
                                 break
-                            else:
-                                self.hardware.set_box_is_empty()
-                                break
+                            # else:
+                            #     self.hardware.set_box_is_empty()
+                            #     break
+                        # TODO db + email
                     elif checkReceiver['status'] == 'failure':
                         self.sendToDisplay(checkReceiver['message'], 1)
-
-                    self.sendToDisplay("please lock the door", 1)
+                    self.sendToDisplay("Door locked", 2)
                     sleep(5)
                 elif self.hardware.door_status == True:
                     #TODO door was not closed properly
@@ -173,7 +170,7 @@ class PiLockerSystem:
             elif self.hardware.box_is_empty == False:
                 if self.hardware.door_status == False:
                     #user pick up the parcel
-                    self.sendToDisplay("please input the code to unlock the door or use nfc tag", 1)
+                    self.sendToDisplay("Input the code", 1)
                     self.waitForUnlock()
 
                 elif self.hardware.door_status == True:
@@ -183,8 +180,8 @@ class PiLockerSystem:
 
     def waitForUnlock(self):
         q = queue.Queue()
-        t1 = threading.Thread(target=self.getUID, args=(q,))
-        t2 = threading.Thread(target=self.pinpadCode, args=(q,))
+        t1 = threading.Thread(target=self.getUID, args=())
+        t2 = threading.Thread(target=self.pinpadCode, args=())
         t1.start()
         t2.start()
 
@@ -218,7 +215,7 @@ class PiLockerSystem:
         :return:
         """
         try:
-            uid = pn532.read_passive_target(timeout=5)
+            uid = pn532.read_passive_target(timeout=5000)
             uid = "".join("%02X" % i for i in uid)[:-1]
             return uid
         except Exception as e:
@@ -260,8 +257,9 @@ class PiLockerSystem:
         TODO: get the input from the pinpad
         :return: 4-digit pin
         """
-        print("print from pinpadCode" , code)
+
         code = keyinputs(4)
+        print("print from pinpadCode" , code)
         return code
 
     def pinpadMobile(self):
@@ -274,7 +272,6 @@ class PiLockerSystem:
         return mobile
 
 
-
 def getUID():
     """
     read the uid of the nfc card
@@ -283,10 +280,10 @@ def getUID():
     try:
         uid = pn532.read_passive_target(timeout=5000)
         uid = "".join("%02X" % i for i in uid)[:-1]
-        print(uid)
         return uid
     except Exception as e:
         print(e)
         return "00000000"
+    # TODO: why here has a KeyboardInterrupt?
     except KeyboardInterrupt:
         pass
