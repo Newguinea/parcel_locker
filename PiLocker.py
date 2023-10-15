@@ -45,18 +45,21 @@ def get_key():
 
     return None
 
-def keyinputs():
+def keyinputs(num_digits):
+    """get the num of digits from the keypad, if the user press the * key, reset the input"""
+    output = ""
     try:
-        while True:
+        #if lenth of the output is less than num_digits, keep getting the input
+        while len(output) < num_digits:
             key = get_key()
-            if key=="#":
-                return
-            if key:
-                print(f'Key pressed: {key}')
-            # sleep(0.1)
+            if key == "*":
+                output = ""
+            else:
+                #combine output and key together
+                output = output + str(key)
+    GPIO.cleanup()
+    return output
 
-    except KeyboardInterrupt:
-        GPIO.cleanup()
 
 # This class is responsible for controlling the door.
 # The isLockerClosed method checks whether the locker is closed. It makes a determination by detecting magnetic field strength.
@@ -259,7 +262,7 @@ class PiLockerSystem:
         TODO: get the input from the pinpad
         :return: 4-digit pin
         """
-        code = input("Please enter your pin: ")
+        code = keyinputs(4)
         return code
 
     def pinpadMobile(self):
@@ -267,7 +270,7 @@ class PiLockerSystem:
         TODO: get the input from the pinpad
         :return:
         """
-        mobile = input("Please enter your mobile: ")
+        mobile = keyinputs(10)
         return mobile
 
 
