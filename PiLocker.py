@@ -11,6 +11,7 @@ from time import sleep
 from email_module.mail import getrecipientinfo
 import queue
 
+GPIO.setmode(GPIO.BCM)
 magSensor = PiicoDev_QMC6310(range=3000)
 threshold = 100 # microTesla or 'uT'.
 pn532 = NFC.PN532("/dev/ttyUSB0")
@@ -34,31 +35,28 @@ KEYS = [
 ]
 
 def get_key():
-    GPIO.setmode(GPIO.BCM)
     for i, pin in enumerate(ROW_PINS):
         GPIO.output(pin, GPIO.LOW)
         for j, col_pin in enumerate(COL_PINS):
             if GPIO.input(col_pin) == GPIO.LOW:
                 time.sleep(0.5)  # Debounce
                 return KEYS[i][j]
-        GPIO.output(pin, GPIO.HIGH)
-
-    return None
 
 def keyinputs(num_digits):
     """get the num of digits from the keypad, if the user press the * key, reset the input"""
     output = ""
     try:
         #if lenth of the output is less than num_digits, keep getting the input
-        while len(output) < num_digits:
+        while len(output) <= num_digits:
             key = get_key()
             if key == "*":
                 output = ""
             else:
                 #combine output and key together
                 output = output + str(key)
-    GPIO.cleanup()
-    return output
+        return output        
+    except Exception:
+        GPIO.cleanup()
 
 
 # This class is responsible for controlling the door.
@@ -262,6 +260,7 @@ class PiLockerSystem:
         TODO: get the input from the pinpad
         :return: 4-digit pin
         """
+        print("print from pinpadCode" , code)
         code = keyinputs(4)
         return code
 
@@ -271,6 +270,7 @@ class PiLockerSystem:
         :return:
         """
         mobile = keyinputs(10)
+        print("print from pinpadMobile" , mobile)
         return mobile
 
 
@@ -290,6 +290,3 @@ def getUID():
         return "00000000"
     except KeyboardInterrupt:
         pass
-
-
-getUID()
