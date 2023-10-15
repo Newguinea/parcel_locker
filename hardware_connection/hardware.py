@@ -1,6 +1,4 @@
 from app.models import Log
-from email_module.mail import getrecipientinfo
-from PiLocker import DoorControl
 
 
 def getLastUserCode():

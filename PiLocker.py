@@ -2,12 +2,12 @@
 import PN532_UART as NFC
 from PiicoDev_QMC6310_new import PiicoDev_QMC6310
 from PiicoDev_SSD1306 import *
-from picamera import PiCamera
+# from picamera import PiCamera
 import RPi.GPIO as GPIO
 import threading
 import time
 from time import sleep
-from hardware_connection.hardware import getLastUserCode
+# from hardware_connection.hardware import getLastUserCode
 from email_module.mail import getrecipientinfo
 import queue
 
@@ -15,7 +15,7 @@ magSensor = PiicoDev_QMC6310(range=3000)
 threshold = 100 # microTesla or 'uT'.
 pn532 = NFC.PN532("/dev/ttyUSB0")
 display = create_PiicoDev_SSD1306()
-camera = PiCamera()
+# camera = PiCamera()
 
 # This class is responsible for controlling the door.
 # The isLockerClosed method checks whether the locker is closed. It makes a determination by detecting magnetic field strength.
@@ -96,6 +96,7 @@ class PiLockerSystem:
         # self.thread.start()
 
     def start(self):
+        print("doorsystem starts")
         while True:
             # no things in the box
             if self.hardware.box_is_empty == True:
@@ -196,7 +197,7 @@ class PiLockerSystem:
         the number of line is from 1 to 8
         """
         # clear the screen
-        display.clear()
+        # display.clear()
         # display.fill(0)
         display.text(text, 0, 15*(line-1), 1)
         display.show()
@@ -227,3 +228,24 @@ class PiLockerSystem:
         """
         mobile = input("Please enter your mobile: ")
         return mobile
+
+
+
+def getUID():
+    """
+    read the uid of the nfc card
+    :return:
+    """
+    try:
+        uid = pn532.read_passive_target(timeout=5000)
+        uid = "".join("%02X" % i for i in uid)[:-1]
+        print(uid)
+        return uid
+    except Exception as e:
+        print(e)
+        return "00000000"
+    except KeyboardInterrupt:
+        pass
+
+
+getUID()
