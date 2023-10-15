@@ -26,6 +26,10 @@ def getrecipientinfo(phoneNumber):
         "email": ""
         nfc_id: ""
     }
+    {
+        "status": "failure",
+        "message": "Phone number not found"
+    }
     """
     try:
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -121,7 +125,7 @@ def send_message(text, email_address, firstname):
     except requests.RequestException as e:
         return {
             "status": "failure",
-            "message":f"Failed to send email: {str(e)}"
+            "message": f"Failed to send email: {str(e)}"
         }
 
 
@@ -131,6 +135,7 @@ def getRandomcode4():
     :return: The generated code
     """
     return ''.join(random.choice(string.digits) for _ in range(4))
+
 
 def putLog(nfc_id, code, is_taken=False):
     """
@@ -156,7 +161,8 @@ def putLog(nfc_id, code, is_taken=False):
         print(f"Database error: {str(e)}")
         return False
 
-def main(phoneNumber):
+
+def sendPickupNotice(phoneNumber):
     """
     :param phoneNumber:
     :return:
@@ -165,6 +171,10 @@ def main(phoneNumber):
         "status": "success",
         "code": 1234,
         "nfc_id": "12345678"
+    }
+    {
+        "status": "failure",
+        "message": "Phone number not found"
     }
     """
     recipientinfo = getrecipientinfo(phoneNumber)
@@ -184,8 +194,8 @@ def main(phoneNumber):
             return json.dumps(result, indent=4)
 
     elif recipientinfo['status'] == 'failure':
-      return json.dumps(recipientinfo, indent=4)  # return the error message
+        return json.dumps(recipientinfo, indent=4)  # return the error message
 
 
 if __name__ == '__main__':
-    print(main("0466628549"))
+    print(getrecipientinfo("0466628549"))

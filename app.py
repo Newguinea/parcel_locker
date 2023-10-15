@@ -2,12 +2,12 @@
 from app import app, db
 from app.models import User
 import threading
-from hardware_connection.hardware import print_every_5_seconds
+from PiLocker import DoorControl, PiLockerSystem
 
 if __name__ == "__main__":
-    """an example of running something and flask app at the same time"""
-    t = threading.Thread(target=print_every_5_seconds)
-    t.daemon = True  # Set the thread as a daemon thread to ensure it exits when the program exits.
-    t.start()
-    #flask app debug mode
-    app.run(debug=True)
+    # Create and start PiLockerSystem
+    pi_locker_system = PiLockerSystem()
+    locker_thread = threading.Thread(target=pi_locker_system.start)
+    locker_thread.start()
+
+    app.run(debug=True)#run flask here
