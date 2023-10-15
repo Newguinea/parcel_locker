@@ -16,6 +16,47 @@ threshold = 100 # microTesla or 'uT'.
 pn532 = NFC.PN532("/dev/ttyUSB0")
 display = create_PiicoDev_SSD1306()
 # camera = PiCamera()
+ROW_PINS = [17, 18, 27, 22]
+COL_PINS = [23, 24, 25]
+
+for pin in ROW_PINS:
+    GPIO.setup(pin, GPIO.OUT)
+# Setup columns as inputs with pull-up resistors
+for pin in COL_PINS:
+    GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+# Define keypad layout
+KEYS = [
+    ['1', '2', '3'],
+    ['4', '5', '6'],
+    ['7', '8', '9'],
+    ['*', '0', '#']
+]
+
+def get_key():
+    GPIO.setmode(GPIO.BCM)
+    for i, pin in enumerate(ROW_PINS):
+        GPIO.output(pin, GPIO.LOW)
+        for j, col_pin in enumerate(COL_PINS):
+            if GPIO.input(col_pin) == GPIO.LOW:
+                time.sleep(0.5)  # Debounce
+                return KEYS[i][j]
+        GPIO.output(pin, GPIO.HIGH)
+
+    return None
+
+def keyinputs():
+    try:
+        while True:
+            key = get_key()
+            if key=="#":
+                return
+            if key:
+                print(f'Key pressed: {key}')
+            # sleep(0.1)
+
+    except KeyboardInterrupt:
+        GPIO.cleanup()
 
 # This class is responsible for controlling the door.
 # The isLockerClosed method checks whether the locker is closed. It makes a determination by detecting magnetic field strength.
