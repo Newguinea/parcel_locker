@@ -2,29 +2,44 @@
 import PN532_UART as NFC
 from PiicoDev_QMC6310_new import PiicoDev_QMC6310
 from PiicoDev_SSD1306 import *
-# from picamera import PiCamera
+from picamera import PiCamera
 import RPi.GPIO as GPIO
-import threading
+from threading import Thread
 import time
 from time import sleep
-# from hardware_connection.hardware import getLastUserCode
-from email_module.mail import getrecipientinfo
-import queue
+from hardware_connection.hardware import getLastUserCode
+from email_module.mail import getrecipientinfo, sendPickupNotice, send_email_with_mailgun
+from queue import Queue
+import os
 
-GPIO.setmode(GPIO.BCM)
 magSensor = PiicoDev_QMC6310(range=3000)
-threshold = 100 # microTesla or 'uT'.
+threshold = 1000 # microTesla or 'uT'.
 pn532 = NFC.PN532("/dev/ttyUSB0")
 display = create_PiicoDev_SSD1306()
-# camera = PiCamera()
+camera = PiCamera()
+camera.resolution = (267, 200)
+
+GPIO.setmode(GPIO.BCM)
 ROW_PINS = [17, 18, 27, 22]
 COL_PINS = [23, 24, 25]
-
+relay_pin = 16
 for pin in ROW_PINS:
     GPIO.setup(pin, GPIO.OUT)
 # Setup columns as inputs with pull-up resistors
 for pin in COL_PINS:
     GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+def inithw():
+    GPIO.setmode(GPIO.BCM)
+    ROW_PINS = [17, 18, 27, 22]
+    COL_PINS = [23, 24, 25]
+    relay_pin = 16
+    for pin in ROW_PINS:
+        GPIO.setup(pin, GPIO.OUT)
+    # Setup columns as inputs with pull-up resistors
+    for pin in COL_PINS:
+        GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
 
 # Define keypad layout
 KEYS = [
@@ -80,23 +95,18 @@ class DoorControl:
             strength = magSensor.readMagnitude()
             strength_str = str(strength) + ' uT'
             print(strength_str)
-            sleep(1)
+            print("Waiting for the door to close")
             if strength > threshold:
                 print('Strong Magnet! The locker is closed.')
                 self.door_status = False
                 return True
-            else:
-                print('The locker is open.')
-                self.door_status = True
-                return False
-
+            sleep(1)
+    
+    
     # relay
     def openLocker(self):
         try:
-            GPIO.setmode(GPIO.BCM)
-            relay_pin = 18
             GPIO.setup(relay_pin, GPIO.OUT)
-            print("Locker opened")
             self.door_status = True
             return True
 
@@ -105,7 +115,9 @@ class DoorControl:
             return False
 
         finally:
-            pass
+            sleep(10)
+            GPIO.cleanup()
+            inithw()
 
     # def runSensor(self):
     #     """run isLockerClosed function in a thread, 5 seconds per loop"""
@@ -119,6 +131,9 @@ class DoorControl:
 
     def set_box_is_not_empty(self):
         self.box_is_empty = False
+
+    def set_door_closed(self):
+        self.door_status = False
 
 
 # This class is responsible for the overall operation of the PiLocker system.
@@ -135,7 +150,8 @@ class PiLockerSystem:
         # self.thread.start()
 
     def start(self):
-        # print("doorsystem starts")
+        inithw()
+        print("System up. Wating for packages.")
         while True:
             # no things in the box
             if self.hardware.box_is_empty == True:
@@ -158,20 +174,23 @@ class PiLockerSystem:
                             #     self.hardware.set_box_is_empty()
                             #     break
                         # TODO db + email
+                        sendPickupNotice(mobileInput)
                     elif checkReceiver['status'] == 'failure':
                         self.sendToDisplay(checkReceiver['message'], 1)
                     self.sendToDisplay("Door locked", 2)
-                    sleep(5)
+                    sleep(2)
                 elif self.hardware.door_status == True:
                     #TODO door was not closed properly
                     self.sendToDisplay("please close the door", 1)
-                    sleep(5)
+                    sleep(2)
             # things in the box(user pick up the parcel)
             elif self.hardware.box_is_empty == False:
                 if self.hardware.door_status == False:
                     #user pick up the parcel
-                    self.sendToDisplay("Input the code", 1)
+                    self.sendToDisplay("Input the code", 3)
                     self.waitForUnlock()
+                    
+
 
                 elif self.hardware.door_status == True:
                     #user did not pick up the parcel
@@ -179,52 +198,79 @@ class PiLockerSystem:
                     sleep(5)
 
     def waitForUnlock(self):
-        q = queue.Queue()
-        t1 = threading.Thread(target=self.getUID, args=())
-        t2 = threading.Thread(target=self.pinpadCode, args=())
+        sec = Thread(target=self.sec)
+        sec.start()
+        res = getLastUserCode()
+        q = Queue()
+        t1 = Thread(target=self.accessByPin, args=(q,res['message']['code'],))
         t1.start()
-        t2.start()
-
-        source, value = q.get()  # when there is no data in the queue, it will block the thread
-        if source == 'nfc':
-            # if value is same as getLastUserCode
-            if value == getLastUserCode()['message']['nfc_id']:
+        print("Wating for unlocking")
+        while q.empty():
+            nfcid=getUID()
+            # print("detected nfc id:",nfcid)
+            # print("-------------------------")
+            if nfcid == res['message']['nfc_id']:
+                print("Door unlocked by Card")
                 self.hardware.openLocker()
-                self.sendToDisplay("please close the door when finised", 2)
-                self.hardware.box_is_empty = True
-                sleep(5)
-            else:
-                self.sendToDisplay("Invalid NFC tag detected", 1)
-                sleep(5)
-        else:
-            # if value is same as getLastUserCode
-            if value == getLastUserCode()['message']['code']:
-                self.hardware.openLocker()
-                self.sendToDisplay("please close the door when finised", 2)
-                self.hardware.box_is_empty = True
-                sleep(5)
-            else:
-                self.sendToDisplay("Incorrect code entered", 1)
-                sleep(5)
+                self.sendToDisplay("Thank you", 2)
+                GPIO.cleanup()
+                os._exit(0)
+            elif nfcid != res['message']['nfc_id']:
+                self.sendToDisplay("Wrong NFC", 1)
+            elif nfcid=="00000000":
+                continue
+            sleep(2)
+        if q.get() == "done":
+            print("Door unlocked by pin")
+            self.hardware.openLocker()
+            self.sendToDisplay("Thank you", 2)
+            GPIO.cleanup()
+            os._exit(0)
 
 
-    # nfc card uid reader
-    def getUID(self):
-        """
-        read the uid of the nfc card
-        :return:
-        """
-        try:
-            uid = pn532.read_passive_target(timeout=5000)
-            uid = "".join("%02X" % i for i in uid)[:-1]
-            return uid
-        except Exception as e:
-            print(e)
-            return "00000000"
-        # TODO: why here has a KeyboardInterrupt?
-        except KeyboardInterrupt:
-            pass
+    def accessByPin(self, q, code):
+        while True:
+            if code == self.pinpadCode():
+                q.put("done")
+                break
+            elif code != self.pinpadCode():
+                self.sendToDisplay("Wrong Code", 4)
+            sleep(1)
 
+
+    def sec(self):
+        print("666666666666666666")
+        count=0
+        uc_PIN_TRIGGER = 5
+        uc_PIN_ECHO = 6
+        GPIO.setup(uc_PIN_TRIGGER, GPIO.OUT)
+        GPIO.setup(uc_PIN_ECHO, GPIO.IN)
+        while True:
+            GPIO.output(uc_PIN_TRIGGER, GPIO.LOW)
+            GPIO.output(uc_PIN_TRIGGER, GPIO.HIGH)
+            sleep(0.00001)
+            GPIO.output(uc_PIN_TRIGGER, GPIO.LOW)
+            while GPIO.input(uc_PIN_ECHO)==0:
+                pulse_start_time = time.time()
+            while GPIO.input(uc_PIN_ECHO)==1:
+                pulse_end_time = time.time()
+            pulse_duration = pulse_end_time - pulse_start_time
+            distance = round(pulse_duration * 17150, 2)
+            print("distance:",distance)
+            if distance <= 20:
+                count=count+1
+            if count>= 5:
+                print("Sending Alert")
+                self.take_photo("/home/iot-lab-2023/cits5506/1.jpg")
+                send_email_with_mailgun("rfc@live.com","/home/iot-lab-2023/cits5506/1.jpg")
+                break
+                count=0
+            sleep(1)
+
+    def take_photo(file_path):
+        camera.capture(file_path)
+    #    camera.stop_preview()
+    #    camera.start_preview()
 
     # oled display
     def sendToDisplay(self, text, line):
@@ -237,29 +283,21 @@ class PiLockerSystem:
         """
         # clear the screen
         # display.clear()
-        # display.fill(0)
+        display.fill(0)
         display.text(text, 0, 15*(line-1), 1)
         display.show()
 
 
-    # camera
-    def takePhoto(self):
-        try:
-            camera.capture('./image.jpg')
-            return True
-        except Exception as e:
-            print(e)
-            return False
-
-
-    def pinpadCode(self):
+    def pinpadCode(self,q=None):
         """
         TODO: get the input from the pinpad
         :return: 4-digit pin
         """
 
         code = keyinputs(4)
-        print("print from pinpadCode" , code)
+        # print("print from pinpadCode" , code)
+        if q is not None:
+            q.put(("code",code))
         return code
 
     def pinpadMobile(self):
@@ -268,7 +306,7 @@ class PiLockerSystem:
         :return:
         """
         mobile = keyinputs(10)
-        print("print from pinpadMobile" , mobile)
+        # print("print from pinpadMobile" , mobile)
         return mobile
 
 
@@ -278,11 +316,11 @@ def getUID():
     :return:
     """
     try:
-        uid = pn532.read_passive_target(timeout=5000)
+        uid = pn532.read_passive_target(timeout=1000)
         uid = "".join("%02X" % i for i in uid)[:-1]
         return uid
     except Exception as e:
-        print(e)
+        # print(e)
         return "00000000"
     # TODO: why here has a KeyboardInterrupt?
     except KeyboardInterrupt:

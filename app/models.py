@@ -38,6 +38,6 @@ class Residence(db.Model):
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nfc_id = db.Column(db.String(8), nullable=False)
-    code = db.Column(db.Integer, nullable=False)
+    code = db.Column(db.String(4), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False)
     is_taken = db.Column(db.Boolean, nullable=False, default=False)
