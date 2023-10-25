@@ -259,13 +259,19 @@ Figure 6: Software working flow diagram.
 #### Flask Web Application
 
 The central interface is exclusively designed for administrators, ensuring they have a secure and dedicated portal for their operations. Its primary purpose is to provide a robust environment where authorised administrators can manage resident data with ease.
+
 ![img_6.png](md_pictures/img_6.png)
+
 Figure 7: Admin Login Page in Flask App
 
 Here is a login page for admin login (shown in Figure 7). Before that, the admin’s username and password can be added with add_user.py by changing the account name, email, and password in the file (shown in Appendix A). At the heart of this system is the "Resident Management" feature (shown in Figure 8), which is displayed after login successfully. Here, administrators can dive into a comprehensive list that showcases residents, their respective room numbers, and email addresses. This detailed list not only offers a bird's eye view of all the residents but also empowers admins with management capabilities. The administrator can go to the profile page by clicking the name to modify the resident information (shown in Figure 9). They can effortlessly delete resident entries with the Delete button or add new ones with the help of the "Register New Residents" button. This button directs them to a specially designed form that ensures seamless registration of new residents.
+
 ![img_7.png](md_pictures/img_7.png)
+
 Figure 8: Resident List Page in Flask App
+
 ![img_8.png](md_pictures/img_8.png)
+
 Figure 9: Edit Residence Info Page in Flask App
 
 When it comes to registering new residents, the system features an "Add New Residence Form" (as illustrated in Figure 10). This detailed form is designed to capture all essential details about a resident. From basic information such as first and last names, email, and phone numbers to more granular data like unit number, room number, and a distinct NFC ID, everything is arranged for accurate data input. By swiping an NFC card on the NFC module, the system will automatically generate the corresponding NFC ID. The "Create" button ensures a smooth conclusion to the registration process, guaranteeing a hiccup-free experience.
