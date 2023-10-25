@@ -106,7 +106,7 @@ def getNFCID():
     # call NFCid here, please change the line below
     if NFCid:
         if NFCid == "00000000":
-            return jsonify({"status": "failure", "message": "Error"}), 500
+            return jsonify({"status": "failure", "message": "there is no card or nfc tag on nfc reader"}), 500
         return jsonify({"status": "success", "NFCid": NFCid}), 200
     else:
         return jsonify({"status": "failure", "message": "Error"}), 500
