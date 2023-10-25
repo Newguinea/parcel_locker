@@ -38,6 +38,9 @@ flask db upgrade
 
 ```
 
+### change the API_KEY="this is the api key for mail gum" in .env file
+maybe you need to sign up a mailgun account to get the api key.
+
 These three commands will:
 
 1. Initialize a new migration repository.
