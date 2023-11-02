@@ -1,8 +1,6 @@
 # smart parcel locker
 
-
 The global parcel market has witnessed an unprecedented surge fuelled by the exponential growth of e-commerce. In response to this escalating demand, ensuring the security and convenience of parcel deliveries has become paramount. This surge, however, has also ushered in a concerning increase in parcel thefts, necessitating innovative solutions to safeguard deliveries. Introducing the Smart Parcel Locker System, a state-of-the-art solution designed to revolutionise package management in multi-unit dwellings. This system integrates cutting-edge technologies, including Raspberry Pi, NFC modules, magnetic sensors, OLED displays, and ultrasonic sensors, to create a secure and efficient parcel management ecosystem. Alongside these, the software suite, powered by a robust backend architecture, provides tracking, notifications, and analytics, ensuring seamless management of parcels. The NFC module ensures secure user authentication, allowing only authorised individuals to access the lockers. This System not only enhances the convenience of deliveries but also addresses the pressing issue of security in an era marked by increasing e-commerce activity. By providing secure storage, controlled access, and a robust software interface, it caters to the evolving needs of residents and couriers in modern urban environments. With its integration with a Raspberry Pi, the system boasts flexibility, scalability, and the potential for future enhancements. As the demand for reliable and secure parcel management solutions continues to surge, the Smart Parcel Locker System stands ready to redefine the future of package delivery.
-
 
 ### Prerequisites
 
@@ -28,9 +26,11 @@ pip install -r requirements.txt
 ```
 
 ### Database Initialization
+
 Before running the application, you need to initialize, migrate, and upgrade the database using Flask-Migrate. If you haven't set up Flask-Migrate, ensure it's installed by checking your requirements.txt or installing it directly with pip.
 
 To set up the database, follow these steps:
+
 ```bash
 flask db init
 flask db migrate -m "Initial migration."
@@ -39,6 +39,7 @@ flask db upgrade
 ```
 
 ### change the API_KEY="this is the api key for mail gum" in .env file
+
 maybe you need to sign up a mailgun account to get the api key.
 
 These three commands will:
@@ -48,6 +49,7 @@ These three commands will:
 3. Apply these changes to the database.
 
 ### Add administer to database
+
 run add_user.py add a administer account to database. you can change the account name, email, password in the file.
 
 ```bash
@@ -65,6 +67,7 @@ python app.py
 Visit `http://localhost:5000` in your web browser to view the application.
 
 ## Email module
+
 the key of emailgun is in .env file, you can change it to your own key.
 
 ## Running the Tests
@@ -79,17 +82,18 @@ To ensure that the application is functioning as expected, a comprehensive suite
 ```shell
 python -m unittest tests/tests.py
 ```
+
 This command will search for all tests in the project and run them. Upon completion, a summary of the tests will be displayed, including any failures or errors.
 
 It's recommended to run these tests frequently during development to catch any potential issues early on.
 
 ## Built With
 
-* [Flask](http://flask.palletsprojects.com/) - The web framework used.
-* [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/) - An extension for Flask that simplifies database operations using SQLAlchemy.
-* [Flask-Migrate](https://flask-migrate.readthedocs.io/) - An extension for Flask that handles SQLAlchemy database migrations for Flask applications using Alembic.
-* [SQLite](https://www.sqlite.org/) - Lightweight database used for testing purposes.
-* [unittest](https://docs.python.org/3/library/unittest.html) - The standard library for building and running tests in Python.
+- [Flask](http://flask.palletsprojects.com/) - The web framework used.
+- [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/) - An extension for Flask that simplifies database operations using SQLAlchemy.
+- [Flask-Migrate](https://flask-migrate.readthedocs.io/) - An extension for Flask that handles SQLAlchemy database migrations for Flask applications using Alembic.
+- [SQLite](https://www.sqlite.org/) - Lightweight database used for testing purposes.
+- [unittest](https://docs.python.org/3/library/unittest.html) - The standard library for building and running tests in Python.
 
 ## INTRODUCTION AND BACKGROUND
 
@@ -121,13 +125,12 @@ As per Google Trends data, there has been a significant surge in global searches
 
 Gavin Murphy, CMO of Scurri, said, “When parcel delivery fails at the final hurdle, the customer experience fails expectations and customers may be discouraged from buying online again from that retailer. Real-time data is critical. Simply stating that a package has been dispatched or is on board a last-mile delivery vehicle is totally inadequate.”
 
-In 2019, 36% of respondents reported experiencing package theft, a number which increased to 43% in 2020. Among those who had a package stolen, a significant 64% stated they fell victim to this crime multiple times, 
+In 2019, 36% of respondents reported experiencing package theft, a number which increased to 43% in 2020. Among those who had a package stolen, a significant 64% stated they fell victim to this crime multiple times,
 
 Figure 1.
 ![img.png](md_pictures/img.png)
 
 Figure 1: Comparison of Package Theft Incidents: 2019 vs. 2020. Source: [6]
-
 
 Upon realising their package had been stolen, almost half (47%) took the step of filing a police report. The average cost of the pilfered package amounted to $136. Encouragingly, 81% shared that they were able to secure a refund for the stolen item(s).
 
@@ -192,8 +195,10 @@ As shown in Figure 3, A strategically positioned magnetic sensor diligently moni
 Figure 3: Working flow diagram
 
 In concert with the Raspberry Pi's directives, an OLED display, integrated seamlessly into the locker, imparts real-time feedback to users. Its functions range from signalling locker availability to dispensing essential usage instructions or delivery status updates. Notably, the Camera Module and Ultrasonic Sensor are strategically positioned outside the locker to enhance security and monitoring. This strategic placement allows for efficient tracking of parcel delivery and collection, ensuring a comprehensive view of activity.
+
 #### Hardware Implementation and Configurations
-At the heart of the Smart Parcel Locker System lies the Raspberry Pi, functioning as the central command unit, both powered and internet-connected for seamless communication. This versatile hub orchestrates the entire operation. The NFC Module (PN532) securely interfaces with the Raspberry Pi via GPIO pins, allowing access through NFC cards or compatible devices. The Magnetometer (QMC6310) adds an extra layer of security, communicating through the I2C interface to detect any unauthorized access or tampering attempts. An intuitive OLED Display (PiicoDev OLED Display Module SSD1306) communicates effortlessly with the Raspberry Pi through the I2C interface, providing users with a clear visual interface. 
+
+At the heart of the Smart Parcel Locker System lies the Raspberry Pi, functioning as the central command unit, both powered and internet-connected for seamless communication. This versatile hub orchestrates the entire operation. The NFC Module (PN532) securely interfaces with the Raspberry Pi via GPIO pins, allowing access through NFC cards or compatible devices. The Magnetometer (QMC6310) adds an extra layer of security, communicating through the I2C interface to detect any unauthorized access or tampering attempts. An intuitive OLED Display (PiicoDev OLED Display Module SSD1306) communicates effortlessly with the Raspberry Pi through the I2C interface, providing users with a clear visual interface.
 The Relay Module and Solenoid Lock (FL-3FF-S-Z) manage secure access control. The relay module, linked to the Raspberry Pi's GPIO pins, acts as the switch to control the solenoid lock, which operates on a separate 12V power source, ensuring only authorised users retrieve parcels. A Camera Module, integrated into the Raspberry Pi's camera port facilitates image capture and processing for enhanced security measures. The Numeric Keypad, connected to the Raspberry Pi via GPIO pins, adds an extra layer of user authentication through PIN-based access. Externally, the Ultrasonic Sensor (RCWL-1601), interfaced with the Raspberry Pi via GPIO pins, acts as a vigilant guardian, detecting motion around the parcel box, further fortifying security. Power distribution is streamlined, with the Raspberry Pi, NFC module, magnetometer, OLED display, relay module, and numeric keypad drawing power through the GPIO pins. These deliver both 3.3V and 5V outputs, while the solenoid lock and camera module rely on a dedicated power source with meticulous voltage regulation. Figure 4 shows the whole circuit diagram of the system.
 
 ![img_3.png](md_pictures/img_3.png)
@@ -204,7 +209,7 @@ Figure 4: Circuit diagram of smart parcel locker
 ##### • Raspberry Pi
 
 The choice of the Raspberry Pi as the project's microcontroller and communication hub was driven by its extensive documentation, robust library support, and expansive ecosystem of compatible integrations. This decision was made to ensure adaptability in addressing various challenges and achieving optimal system performance. However, it's worth noting that this choice comes with a slight trade-off in terms of increased cost and physical size compared to more specialised microcontrollers.
- 
+
 An Expander Pi module from AB Electronics was integrated to augment the capabilities of the Raspberry Pi. This addition facilitates seamless access to the three analogy photocells through the MCP3208 ADC converter. Additionally, digital I/O pins were strategically employed to create a compact yet effective LED-based status monitoring circuit. The versatility of this setup empowers the project to tackle a diverse range of scenarios, ensuring adaptability in current and prospective applications. The Raspberry Pi's rich library ecosystem and well-documented resources significantly expedited the development process. Leveraging these readily available resources not only streamlined the implementation but also allowed for a more robust and sophisticated solution.
 
 ##### • NFC Module (PN532):
@@ -215,17 +220,17 @@ The NFC (Near Field Communication) module is a vital component within the Smart 
 
 The inclusion of the QMC6310 magnetometer in the Smart Parcel Locker System is pivotal for several reasons. Firstly, its high sensitivity to magnetic fields significantly enhances security. This sensitivity allows it to promptly detect any irregular or unauthorised attempts to tamper with the locker, acting as a robust deterrent against potential theft or tampering. Additionally, the QMC6310 serves as a vital tamper-proofing mechanism, ensuring that any unauthorised manipulation of the locker is immediately identified. While other authentication methods like NFC cards and PIN codes are effective, they may still have vulnerabilities. The QMC6310 provides an additional layer of non-invasive yet highly effective security by detecting any magnetic interference. This redundancy in security measures substantially reinforces the overall system. Moreover, the QMC6310's capability to detect both static and dynamic magnetic fields means it can identify changes caused by attempts to manipulate the locker's locking mechanism. This versatility further solidifies its role in enhancing security within the Smart Parcel Locker System, making it an indispensable component for safeguarding parcels.
 
-##### • OLED (PiicoDev OLED Display Module (128x64) SSD1306): 
+##### • OLED (PiicoDev OLED Display Module (128x64) SSD1306):
 
 OLED displays are known for their exceptional visual quality, providing clear and vibrant images along with high contrast ratios. This ensures that information displayed on the screen is easily readable and discernible, even in varying lighting conditions. OLED technology offers flexibility in terms of screen size, allowing for a compact yet informative display. This is particularly advantageous for the Smart Parcel Locker, where space may be limited, but the need for conveying crucial information is paramount. Additionally, OLED displays are known for their energy efficiency. They only consume power when pixels are active, making them an economical choice for displaying static or intermittently changing information, aligning well with the intermittent usage patterns of a parcel locker. Furthermore, OLED screens provide a wide viewing angle, ensuring that users can easily interact with the locker from various positions and angles. OLED displays are compatible with Raspberry Pi, making the integration process seamless. The availability of libraries and resources for interfacing OLED screens with Raspberry Pi further streamlines the development process. In essence, the choice of an OLED display in the Smart Parcel Locker System is driven by its superior visual quality, energy efficiency, compatibility with Raspberry Pi, and suitability for space-constrained environments, all of which contribute to an enhanced user experience.
 
-##### • Relay Module (FL-3FF-S-Z is a standard 5VDC relay) and Solenoid lock: 
+##### • Relay Module (FL-3FF-S-Z is a standard 5VDC relay) and Solenoid lock:
 
 The Relay Module and Solenoid Lock were selected for their seamless compatibility with the Raspberry Pi microcontroller, ensuring efficient control over the locker's security. The relay module acts as a vital intermediary, allowing the low-voltage Raspberry Pi to manage the higher-voltage solenoid lock effectively. This dynamic ensures the locker remains securely locked until authorised access is granted.
- 
+
 The solenoid lock, known for its robustness and reliability in security applications, operates by electromagnetically controlling the locking mechanism. This feature makes it a sturdy and durable choice, aligning perfectly with the project's security objectives. Its wide use in various security systems attests to its effectiveness in safeguarding valuable items. Furthermore, the solenoid lock's compatibility with the relay module streamlines the integration process. Together, they form a dependable locking mechanism for the parcel locker, guaranteeing that only authorised individuals can access the stored items.
 
-##### • Camera Module: 
+##### • Camera Module:
 
 The PiCamera is a purpose-built module designed to seamlessly integrate with Raspberry Pi, ensuring compatibility and smooth operation within the system. Its compact form factor and low power consumption make it an ideal choice for embedded applications. It offers high-resolution imaging capabilities, enabling detailed and precise capture of parcels and their surroundings. This high-quality visual data is crucial for security and verification purposes, providing a reliable record of received items. The PiCamera's programmable interface allows for flexibility in capturing images, enabling features like motion detection or specific event-triggered photography. This versatility enhances the functionality and security of the Smart Parcel Locker System. Furthermore, the availability of comprehensive documentation, libraries, and a thriving community around the PiCamera simplifies development and troubleshooting, ensuring a smoother integration process.
 
@@ -240,7 +245,7 @@ The Ultrasonic sensor, specifically the RCWL-1601 model, was chosen for its exce
 ##### • Power Supply
 
 In a household setting, a stable power supply is typically assured for the Smart Parcel Locker System. However, optimising power usage remains a crucial consideration for efficiency and cost-effectiveness.
- 
+
 The core components in this system are engineered for low power consumption. The NFC Module, Magnetometer, OLED display, Relay Module, Camera Module, Numeric Keypad, and Ultrasonic Sensor all operate efficiently within the specified voltage range. Of these, the Raspberry Pi is the most power-intensive component, but its selection is justified by the extensive development environment it provides, ensuring versatility and robust performance.
 
 By strategically utilising the available 3.3V and 5V pins on the Raspberry Pi, along with external power supplies where necessary, the Smart Parcel Locker System optimises power distribution to meet the distinct voltage requirements of its integrated components. This approach not only ensures reliable functionality but also minimises the risk of voltage-related issues.
@@ -252,7 +257,7 @@ By strategically utilising the available 3.3V and 5V pins on the Raspberry Pi, a
 The Smart Parcel Locker system integrates hardware and software components seamlessly. Using Raspberry Pi as the central hub, the system is designed to optimise IoT functionalities, efficiently manage resident data, and provide real-time notifications. The software architecture is shown in Figure 5. Figure 6 shows the flow chart of how the system run.
 
 ![img_4.png](md_pictures/img_4.png)
-Figure 5:  Software Architecture
+Figure 5: Software Architecture
 ![img_5.png](md_pictures/img_5.png)
 Figure 6: Software working flow diagram.
 
@@ -278,7 +283,6 @@ When it comes to registering new residents, the system features an "Add New Resi
 
 ![img_9.png](md_pictures/img_9.png)
 
-
 Beyond these functionalities, the system demonstrates its technological prowess by integrating with Raspberry Pi. This integration is pivotal for capturing real-time data, especially when it comes to locker statuses. Even though the parcel box status view is not displayed on the provided pages, this integration guarantees that the admin panel remains updated, facilitating efficient parcel management.
 In summary, these interfaces are a testament to administrative efficiency. They encompass a range of functionalities, from registering and updating resident details to monitoring parcel box statuses and managing delivery notifications and alerts. The system ensures that administrators have a comprehensive toolkit at their disposal.
 
@@ -294,7 +298,7 @@ To top it all off, the entire system gets its dynamism from the Flask applicatio
 
 #### Email Module
 
-The Email module (Figure 11), executed with Python and the Mailgun API, has been meticulously crafted to bolster package delivery transparency and efficiency. Its primary role is to offer immediate notifications to package beneficiaries, ensuring prompt and effective package collection. Utilizing the Simple Mail Transfer Protocol in conjunction with the Mailgun API, the system assures secure and rapid email dispatches. For enhanced security measures, API keys are securely stored through the dotenv module, mitigating the vulnerabilities of embedding sensitive information directly in the code. The module effortlessly integrates with an SQLite database, allowing it to retrieve recipient information and keep a detailed record of package deliveries. 
+The Email module (Figure 11), executed with Python and the Mailgun API, has been meticulously crafted to bolster package delivery transparency and efficiency. Its primary role is to offer immediate notifications to package beneficiaries, ensuring prompt and effective package collection. Utilizing the Simple Mail Transfer Protocol in conjunction with the Mailgun API, the system assures secure and rapid email dispatches. For enhanced security measures, API keys are securely stored through the dotenv module, mitigating the vulnerabilities of embedding sensitive information directly in the code. The module effortlessly integrates with an SQLite database, allowing it to retrieve recipient information and keep a detailed record of package deliveries.
 
 This not only provides chronological documentation of all deliveries but also guarantees that beneficiaries receive the necessary alerts (Figure 12). We use an ultrasonic sensor for human detection. When someone is picking up a package, if they stay in front of the delivery locker for more than 5 seconds, the PiCamera will take a photo and send an email to the recipient of the package.
 
@@ -318,8 +322,6 @@ The Log Model is geared towards tracking and documenting various activities, inc
 
 Furthermore, to maintain data integrity and accuracy, a comprehensive set of CRUD operations is in place, facilitating the creation, reading, updating, and deletion of data records.
 
-
-
 ## RESULTS AND TESTING
 
 ### Automated Testing for Residence Management System
@@ -337,44 +339,43 @@ The testing phase of the Residence Management System sought to ensure that all f
 **Authenticate Authorisation:** Some tests ensure that the application routes and features are only accessible to authenticated users.
 
 #### Test Overview
+
 Table 1: Test items with test.py
 
-| Category                  | Test Description                                          | Test Name                           |
-|---------------------------|----------------------------------------------------------|-------------------------------------|
-| Routes Testing            |                                                          |                                     |
-| Setup & Teardown          | Fresh SQLite database setup and destroy for test isolation.|                                    |
-| Login & Logout Routes     | Ensure successful login.                                 | test_login                          |
-|                           | Ensure successful logout.                                | test_logout                         |
-| Residence Management      | Validates the creation of a new residence.               | test_create_residence               |
-|                           | Ensures successful residence deletion.                   | test_delete_residence               |
-|                           | Tests the edit functionality for residences.             | test_edit_residence                 |
-| API Testing               |                                                          |                                     |
-| Fetching Residence Details| Retrieves details of a specific residence.               | test_get_residence                  |
-|                           | Ensures multiple residences are listed correctly.        | test_residence_list_data            |
-| NFCID Retrieval           | Check if NFCID can be retrieved successfully.            | test_getNFCID_success               |
-|                           | Tests application's response to NFCID value "00000000". | test_getNFCID_error (1st scenario)  |
-|                           | Tests application's response to no NFCID value (None).   | test_getNFCID_error (2nd scenario)  |
+| Category                   | Test Description                                            | Test Name                          |
+| -------------------------- | ----------------------------------------------------------- | ---------------------------------- |
+| Routes Testing             |                                                             |                                    |
+| Setup & Teardown           | Fresh SQLite database setup and destroy for test isolation. |                                    |
+| Login & Logout Routes      | Ensure successful login.                                    | test_login                         |
+|                            | Ensure successful logout.                                   | test_logout                        |
+| Residence Management       | Validates the creation of a new residence.                  | test_create_residence              |
+|                            | Ensures successful residence deletion.                      | test_delete_residence              |
+|                            | Tests the edit functionality for residences.                | test_edit_residence                |
+| API Testing                |                                                             |                                    |
+| Fetching Residence Details | Retrieves details of a specific residence.                  | test_get_residence                 |
+|                            | Ensures multiple residences are listed correctly.           | test_residence_list_data           |
+| NFCID Retrieval            | Check if NFCID can be retrieved successfully.               | test_getNFCID_success              |
+|                            | Tests application's response to NFCID value "00000000".     | test_getNFCID_error (1st scenario) |
+|                            | Tests application's response to no NFCID value (None).      | test_getNFCID_error (2nd scenario) |
 
 #### Outcomes
 
 The automated testing covered key functionalities of the system. The login and logout processes were effectively verified, confirming that users can securely access and exit the system using valid credentials. The system's capabilities in managing residences, including operations like creation, deletion, and modification, were thoroughly validated. Additionally, the functionality to fetch residence details, both for individual and multiple entries, was successfully tested. Notably, the NFCID retrieval function was rigorously examined under both successful and error-prone scenarios, reinforcing the system's robustness.
 
-
 ### Manual Test for System Integration
+
 There are some tests for system integration (Table2)
 
-| Test Number | Test Description                               | Purpose                                                        | Steps                                                                                                                                                        | Expected Result                                                           | Result |
-|-------------|------------------------------------------------|----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|--------|
-| 1           | NFC Card Reading                               | To verify the system reads NFC card data.                       | 1. Place the NFC card on the reader.<br>2. Observe if the system displays related card data or identification.                                               | The system successfully reads and displays NFC card data.                 | Pass   |
-| 2           | Sending Pickup Email                           | Ensure the system sends a notification to the package recipient. | 1. Simulate a new package arrival event in the system.<br>2. Check the recipient's email for pickup notification.                                          | The recipient's email should have a new pickup notification.              | Pass   |
-| 3           | Successful Pickup using NFC                    | Verify pickup success with an NFC card.                         | 1. Place the NFC card on the reader.<br>2. Confirm if the system releases the package or provides pickup confirmation.                                      | The package should be successfully released to the NFC card user.         | Pass   |
-| 4           | Successful Pickup using 4-digit Code           | Ensure pickup success using a 4-digit code.                     | 1. Enter the received 4-digit code in the system.<br>2. Confirm if the system releases the package or provides pickup confirmation.                          | The package should be successfully released to the user entering the 4-digit code. | Pass   |
-| 5           | Successful Pickup using Phone Number           | Verify pickup success with phone number.                        | 1. Enter the intended recipient's phone number in the system.<br>2. Confirm if the system releases the package or provides pickup confirmation.             | The package should be successfully released to the user entering the phone number. | Pass   |
-| 6           | Sending Warning Email due to Sensor Detection  | Ensure the system sends a warning email if someone stands in front of the sensor for over 5 seconds. | 1. Stand in front of the sensor for over 5 seconds.<br>2. The system should capture a photo.<br>3. Check the recipient's email for the warning email with the captured photo. | The recipient's email should have a new warning email with the captured photo. | Pass   |
-| 7           | Incorrect Phone Number Entry                   | Test system behaviour with incorrect phone number.              | 1. Enter an incorrect phone number in the system.<br>2. Try to retrieve a package.                                                                         | The system should display an error message and not release the package.   | Pass   |
-| 8           | Incorrect 4-digit Code Entry                   | Test system behaviour with incorrect 4-digit code.              | 1. Enter an incorrect 4-digit code in the system.<br>2. Try to retrieve a package.                                                                         | The system should display an error message and not release the package.   | Pass   |
-
-
+| Test Number | Test Description                              | Purpose                                                                                              | Steps                                                                                                                                                                         | Expected Result                                                                    | Result |
+| ----------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------ |
+| 1           | NFC Card Reading                              | To verify the system reads NFC card data.                                                            | 1. Place the NFC card on the reader.<br>2. Observe if the system displays related card data or identification.                                                                | The system successfully reads and displays NFC card data.                          | Pass   |
+| 2           | Sending Pickup Email                          | Ensure the system sends a notification to the package recipient.                                     | 1. Simulate a new package arrival event in the system.<br>2. Check the recipient's email for pickup notification.                                                             | The recipient's email should have a new pickup notification.                       | Pass   |
+| 3           | Successful Pickup using NFC                   | Verify pickup success with an NFC card.                                                              | 1. Place the NFC card on the reader.<br>2. Confirm if the system releases the package or provides pickup confirmation.                                                        | The package should be successfully released to the NFC card user.                  | Pass   |
+| 4           | Successful Pickup using 4-digit Code          | Ensure pickup success using a 4-digit code.                                                          | 1. Enter the received 4-digit code in the system.<br>2. Confirm if the system releases the package or provides pickup confirmation.                                           | The package should be successfully released to the user entering the 4-digit code. | Pass   |
+| 5           | Successful Pickup using Phone Number          | Verify pickup success with phone number.                                                             | 1. Enter the intended recipient's phone number in the system.<br>2. Confirm if the system releases the package or provides pickup confirmation.                               | The package should be successfully released to the user entering the phone number. | Pass   |
+| 6           | Sending Warning Email due to Sensor Detection | Ensure the system sends a warning email if someone stands in front of the sensor for over 5 seconds. | 1. Stand in front of the sensor for over 5 seconds.<br>2. The system should capture a photo.<br>3. Check the recipient's email for the warning email with the captured photo. | The recipient's email should have a new warning email with the captured photo.     | Pass   |
+| 7           | Incorrect Phone Number Entry                  | Test system behaviour with incorrect phone number.                                                   | 1. Enter an incorrect phone number in the system.<br>2. Try to retrieve a package.                                                                                            | The system should display an error message and not release the package.            | Pass   |
+| 8           | Incorrect 4-digit Code Entry                  | Test system behaviour with incorrect 4-digit code.                                                   | 1. Enter an incorrect 4-digit code in the system.<br>2. Try to retrieve a package.                                                                                            | The system should display an error message and not release the package.            | Pass   |
 
 ## Conclusion
 
@@ -398,21 +399,21 @@ In terms of future work, implementing machine learning algorithms for anomaly de
 
 Providing customisation options for users to adjust locker settings, including notification preferences, language preferences, or display themes, would add a personalised touch to the system. Additionally, exploring integration possibilities with delivery services and courier companies can streamline the process for both users and delivery personnel. Finally, optimising energy efficiency through power-saving techniques and potentially utilising renewable energy sources should be considered to minimise environmental impact. All these recommendations and future work ideas should be evaluated in alignment with the resources and target audience preferences. Conducting market research or user surveys can provide valuable insights into prioritising these enhancements.
 
-##	REFERENCES
-	
-[1]	Research, ‘Australian courier, Express and Parcel (CEP) Market report 2021 - expected to grow to more than 1 billion parcels a year from 2021’, Research and Markets, 22-Jan-2021. [Online]. Available: https://www.globenewswire.com/news-release/2021/01/22/2162875/0/en/Australian-Courier-Express-and-Parcel-CEP-Market-Report-2021-Expected-to-Grow-to-More-Than-1-Billion-Parcels-a-Year-From-2021.html. [Accessed: 9-Oct-2023].
+## REFERENCES
 
-[2]	N. Kwiet-Evans, ‘Mail fail: 4.2 million parcels have gone missing in the past year’, finder.com.au, 17-May-2023. [Online]. Available: https://www.finder.com.au/missing-parcels-2023. [Accessed: 9-Oct-2023].
+[1] Research, ‘Australian courier, Express and Parcel (CEP) Market report 2021 - expected to grow to more than 1 billion parcels a year from 2021’, Research and Markets, 22-Jan-2021. [Online]. Available: https://www.globenewswire.com/news-release/2021/01/22/2162875/0/en/Australian-Courier-Express-and-Parcel-CEP-Market-Report-2021-Expected-to-Grow-to-More-Than-1-Billion-Parcels-a-Year-From-2021.html. [Accessed: 9-Oct-2023].
 
-[3]	‘Australian parcel theft rockets to an all-time high with the second largest rise than any other country globally’, Australian Associated Press. [Online]. Available: https://www.aap.com.au/aapreleases/cision20221016ae01885/. [Accessed: 10-Oct-2023].
+[2] N. Kwiet-Evans, ‘Mail fail: 4.2 million parcels have gone missing in the past year’, finder.com.au, 17-May-2023. [Online]. Available: https://www.finder.com.au/missing-parcels-2023. [Accessed: 9-Oct-2023].
 
-[4]	Parcelandpostaltechnologyinternational.com. [Online]. Available: https://www.parcelandpostaltechnologyinternational.com/news/delivery/report-finds-global-parcel-theft-on-the-rise-with-uk-the-worst-affected-market.html. [Accessed: 10-Oct-2023].
+[3] ‘Australian parcel theft rockets to an all-time high with the second largest rise than any other country globally’, Australian Associated Press. [Online]. Available: https://www.aap.com.au/aapreleases/cision20221016ae01885/. [Accessed: 10-Oct-2023].
 
-[5]	Modern Retail, ‘UK parcel theft rockets to an all-time high’, Modern Retail, 19-Oct-2022. [Accessed: 10-Oct-2023].
+[4] Parcelandpostaltechnologyinternational.com. [Online]. Available: https://www.parcelandpostaltechnologyinternational.com/news/delivery/report-finds-global-parcel-theft-on-the-rise-with-uk-the-worst-affected-market.html. [Accessed: 10-Oct-2023].
 
-[6]	A. Tuazon, ‘2020 Package Theft Statistics Report’, Market Research Chicago | Market Research Companies | C+R, 19-Dec-2020. [Online]. Available: https://www.crresearch.com/blog/2020-package-theft-statistics-report/. [Accessed: 10-Oct-2023].
+[5] Modern Retail, ‘UK parcel theft rockets to an all-time high’, Modern Retail, 19-Oct-2022. [Accessed: 10-Oct-2023].
 
-[7]	‘A brief history of parcel lockers’, Smiota, 07-Feb-2022. [Online]. Available: https://smiota.com/resources/a-brief-history-of-parcel-lockers. [Accessed: 10-Oct-2023].
+[6] A. Tuazon, ‘2020 Package Theft Statistics Report’, Market Research Chicago | Market Research Companies | C+R, 19-Dec-2020. [Online]. Available: https://www.crresearch.com/blog/2020-package-theft-statistics-report/. [Accessed: 10-Oct-2023].
+
+[7] ‘A brief history of parcel lockers’, Smiota, 07-Feb-2022. [Online]. Available: https://smiota.com/resources/a-brief-history-of-parcel-lockers. [Accessed: 10-Oct-2023].
 
 ## Appendices
 
@@ -436,4 +437,21 @@ The source code is organised under the app directory.
 
 **CSS directory:** Contains the style.css file with the CSS styles for the user interface.
 
-**hardware_connection directory:** contains some basic APIs connecting hardware and software. 
+**hardware_connection directory:** contains some basic APIs connecting hardware and software.
+
+## some picture about this project
+
+picutre 1
+![Alt text](md_pictures/image.png)
+picutre 2
+![Alt text](md_pictures/image-1.png)
+picutre 3
+![Alt text](md_pictures/image-2.png)
+picture 4
+![Alt text](md_pictures/image-3.png)
+picture 5
+![Alt text](md_pictures/image-4.png)
+picture 6
+![Alt text](md_pictures/image-5.png)
+picture 7
+![Alt text](md_pictures/image-6.png)
